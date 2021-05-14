@@ -33,7 +33,7 @@ class REItemHalo : Actor {
         if (master) {
             // Hide if no sprite
             if (master.CurState.sprite == 0) { alpha = 0; return; }
-            if (alpha < actualalpha) alpha += 0.001; // Fade in
+            if (alpha < actualalpha) alpha += 0.01; // Fade in
 
             // Don't always do math stuff
             ticker++;
@@ -45,6 +45,7 @@ class REItemHalo : Actor {
                     AdjustScale(master.CurState.NextState.GetSpriteTexture(master.SpriteRotation));
                     ticker = 0;
                 } else {
+                    alpha = 0;
                     ticker = 0;
                 }
             }
@@ -84,27 +85,10 @@ class REItemHalo : Actor {
 
     States {
         Spawn:
-            REPK A 0 A_DoAnimate();
+            REPK A 0 A_DoAnimate(); // i have to use REPKA0 here, because sprites won't load in, unless you use them
             loop;
     }
 }
-
-/*
-class REIHWeap : REItemHalo {
-    States {
-        Spawn:
-            REPK IJKL 2;
-            loop;
-    }
-}
-
-class REIHHealth : REItemHalo {
-    States {
-        Spawn:
-            REPK MNOP 3;
-            loop;
-    }
-}*/
 
 class REItemThinker : Thinker {
     array<string> classes;
