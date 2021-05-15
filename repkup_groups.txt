@@ -1,3 +1,4 @@
-PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_Consumable,UaS_TraumaKit:REPK:12,13,14,15:2
+UaS_EmptyMedikit,UaS_EmptyStimpack,UaS_EmptyZerkpack,UaS_EmptyRocketBox:TNT1:0:1
+PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_Consumable,UaS_TraumaKit,UaS_2FCartridge:REPK:12,13,14,15:2
 HDWeapon:REPK:8,9,10,11:2
 HDUPK,HDAmmo,HDPickup:REPK:4,5,6,7:2
