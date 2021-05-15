@@ -39,13 +39,12 @@ class REItemHalo : Actor {
             ticker++;
             if (ticker == 16) {
                 if (master.CurState.ValidateSpriteFrame()) {
-                    AdjustScale(master.CurState.GetSpriteTexture(master.SpriteRotation));
+                    AdjustSprite(master.CurState.GetSpriteTexture(master.SpriteRotation));
                     ticker = 0;
-                } else if (master.CurState.NextState && master.CurState.NextState.ValidateSpriteFrame()) {
-                    AdjustScale(master.CurState.NextState.GetSpriteTexture(master.SpriteRotation));
+                } else if (master.CurState.NextState) {
+                    AdjustSprite(master.CurState.NextState.GetSpriteTexture(master.SpriteRotation));
                     ticker = 0;
                 } else {
-                    alpha = 0;
                     ticker = 0;
                 }
             }
@@ -57,18 +56,21 @@ class REItemHalo : Actor {
         else destroy();
     }
 
-    void AdjustScale(TextureID texid) {
+    void AdjustSprite(TextureID texid) {
         //let n = master.GetClassName();
-        let s = TexMan.GetScaledSize(texid);
+        let size    = TexMan.GetScaledSize(texid);
+        let offset  = TexMan.GetScaledOffset(texid);
         let m_scale = master.scale;
         //console.printf(string.format("%d %d %s %s", s.x, s.y, TexMan.GetName(texid), n));
-        let sc = (s.x / 30 * m_scale.x);
-        scale = (sc, 1);
+        let sc = (size.x / 30 * m_scale.x);
+        scale = (sc+0.05, 1);
+        SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * m_scale.x, 0);
     }
 
     // Should be called every tick
     action void A_DoAnimate() {
         if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
+        let master = invoker.master;
         invoker.sprite = invoker.truesprite;
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
@@ -158,6 +160,12 @@ class REItemHandler : EventHandler {
             bool found = false;
             for (int i = 0; i < info.classes.Size(); i++) {
                 if (T is info.classes[i]) {
+                    // Is this a blacklisted item?
+                    if (info.sprite == "TNT1") {
+                        // Don't spawn anything
+                        found = true;
+                        break;
+                    }
                     let halo = REItemHalo(Actor.Spawn("REItemHalo", T.pos));
                     halo.master = T;
                     halo.truesprite = Actor.GetSpriteIndex(info.sprite);
