@@ -1,4 +1,9 @@
-UaS_EmptyMedikit,UaS_EmptyStimpack,UaS_EmptyZerkpack,UaS_EmptyRocketBox:TNT1:0:1
-PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_Consumable,UaS_TraumaKit,UaS_2FCartridge:REPK:12,13,14,15:2
-HDWeapon:REPK:8,9,10,11:2
+DERPBot,HERPBot,HDSpent7mm,UaS_EmptyMedikit,UaS_EmptyStimpack,UaS_EmptyZerkpack,UaS_EmptyRocketBox:TNT1:0:1
+
+UaS_Consumable:REPK:12,13,14,15:2:useicon
+BrownSphere,BlueSphere,SpiritualArmour,PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_TraumaKit,UaS_2FCartridge:REPK:12,13,14,15:2
+
+ZM66AssaultRifle:REPK:8,9,10,11:2:useicon
+HHelmet,HDArmour,HDWeapon:REPK:8,9,10,11:2
+
 HDUPK,HDAmmo,HDPickup:REPK:4,5,6,7:2
