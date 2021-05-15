@@ -3,9 +3,12 @@
 
 A simple mod that adds Resident Evil 4/5 styled glowing thing on pickups.
 
-It should be noted that this mod was made with Hideous Destructor in mind.\
+It should be noted that this mod was made with Hideous Destructor in mind.
+
 
 ## Syntax for custom stuff
+
+All custom stuff goes into `repkup_groups.txt`.
 
 *I hope you're using a monospace font while reading this.*
 ```
@@ -45,3 +48,5 @@ For example, `A` would be represented as `0`. `B` would be `1`, `C` would be `2`
 
 `USEICON`\
 If stated, will use the given `CLASS` inventory icon for scaling and offset.
+
+Note: You should probably make a dummy actor that uses your sprites, else it might not load in.
