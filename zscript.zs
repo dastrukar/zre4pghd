@@ -47,8 +47,7 @@ class REItemGlow : Actor {
             // Hide if no sprite
             if (
                 master.CurState.sprite == 0 &&
-                !(useicon && !Inventory(master).owner) &&
-                !usecustom
+                !(useicon && !Inventory(master).owner)
             ) {
                 alpha = 0;
                 return;
@@ -339,7 +338,7 @@ class REItemHandler : EventHandler {
         // Why is this a thing???
         // Better safe than sorry, I guess.
         // Hopefully the player doesn't drop anything during the very first tic :]
-        if (level.maptime == 1) {
+        if (level.maptime == 2) {
             for (int i = 0; i < playernum.size(); i++) {
                 let player = playernum[i];
                 if (player.FindInventory("REPlayerTracker")) {
