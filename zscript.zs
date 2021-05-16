@@ -7,6 +7,8 @@ class REItemHalo : Actor {
     int tic;
     int frametime;
     int truesprite;
+    bool useicon;
+    string classname;
     float actualalpha;
     array<int> frames;
 
@@ -32,19 +34,29 @@ class REItemHalo : Actor {
         Super.Tick();
         if (master) {
             // Hide if no sprite
-            if (master.CurState.sprite == 0) { alpha = 0; return; }
+            if (
+                master.CurState.sprite == 0 &&
+                !(useicon && !Inventory(master).owner)
+            ) {
+                alpha = 0;
+                return;
+            }
             if (alpha < actualalpha) alpha += 0.01; // Fade in
 
             // Don't always do math stuff
             ticker++;
             if (ticker == 16) {
-                if (master.CurState.ValidateSpriteFrame()) {
+                if (useicon && Inventory(master).icon) {
+                    AdjustSprite(Inventory(master).icon);
+                    ticker = 0;
+                } else if (master.CurState.ValidateSpriteFrame()) {
                     AdjustSprite(master.CurState.GetSpriteTexture(master.SpriteRotation));
                     ticker = 0;
                 } else if (master.CurState.NextState) {
                     AdjustSprite(master.CurState.NextState.GetSpriteTexture(master.SpriteRotation));
                     ticker = 0;
                 } else {
+                    scale  = (1, 1);
                     ticker = 0;
                 }
             }
@@ -52,8 +64,10 @@ class REItemHalo : Actor {
             if (master.pos != pos) {
                 SetOrigin(master.pos, true);
             }
+        } else {
+            console.PrintF(string.Format("Bye, %s!", classname));
+            destroy();
         }
-        else destroy();
     }
 
     void AdjustSprite(TextureID texid) {
@@ -70,7 +84,6 @@ class REItemHalo : Actor {
     // Should be called every tick
     action void A_DoAnimate() {
         if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
-        let master = invoker.master;
         invoker.sprite = invoker.truesprite;
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
@@ -87,16 +100,23 @@ class REItemHalo : Actor {
 
     States {
         Spawn:
-            REPK A 0 A_DoAnimate(); // i have to use REPKA0 here, because sprites won't load in, unless you use them
+            TNT1 A 0 A_DoAnimate();
             loop;
+    }
+}
+
+class REUselessThingJustForLoadingSprites : Actor {
+    States {
+        Spawn: REPK A 0; stop;// i have to use REPKA0 here, because sprites won't load in, unless you use them
     }
 }
 
 class REItemThinker : Thinker {
     array<string> classes;
-    string sprite;
     array<int> frames;
+    string sprite;
     int frametime;
+    bool useicon;
 }
 
 // Where the actors are assigned to each other
@@ -136,6 +156,7 @@ class REItemHandler : EventHandler {
             t.sprite = temp[1];
             temp[2].Split(i_temp, ",");
             t.frametime = temp[3].ToInt(10);
+            t.useicon = (temp.Size() > 4);
 
             // If there's an invalid class, just remove it
             for (int i = 0; i < c_temp.Size(); i++) {
@@ -154,6 +175,7 @@ class REItemHandler : EventHandler {
     override void WorldThingSpawned(WorldEvent e) {
         let T = e.Thing;
 
+        if (T is "UaS_Consumable") console.printf("HI");
         for (int i = 0; i < thinkers.Size(); i++) {
             let info = thinkers[i];
 
@@ -166,11 +188,15 @@ class REItemHandler : EventHandler {
                         found = true;
                         break;
                     }
+                    if (info.useicon) console.printf("USE ICON");
+                    console.PrintF(string.Format("Found %s", T.GetClassName()));
                     let halo = REItemHalo(Actor.Spawn("REItemHalo", T.pos));
                     halo.master = T;
                     halo.truesprite = Actor.GetSpriteIndex(info.sprite);
+                    halo.classname = T.GetClassName();
                     halo.frames.Copy(info.frames);
                     halo.frametime = info.frametime;
+                    halo.useicon = info.useicon;
                     found = true;
                     break;
                 }
