@@ -6,15 +6,18 @@ A simple mod that adds Resident Evil 4/5 styled glowing thing on pickups.
 It should be noted that this mod was made with Hideous Destructor in mind.\
 Although, this mod could possibly work with other mods if tweaked correctly.
 
+Known issues:
+* After completing a map, the player's items may have their sprite appear in front of the glow, instead of being behind it. *(can be fixed by using "repkup_reload")*
+
 ## Default item colours
 * **WHITE**: Skull keys and Computer Maps (keycards not included due to weird bug)
 * **GREEN**: Medical stuff
-* **BLUE**: Weapons and armour
+* **LIGHT BLUE** Armour and backpacks
+* **BLUE**: Weapons
 * **RED**: Ammo and any other pickups
 
 
 ## Syntax for custom stuff
-
 All custom stuff goes into `repkup_groups.txt`.
 
 *I hope you're using a monospace font while reading this.*
@@ -39,6 +42,7 @@ Terrible explanation:
 `CLASS`\
 The class name.
 
+
 `SPRITENAME`\
 The name of the sprite.
 
@@ -52,6 +56,7 @@ The frame index.\
 Must use integers.\
 
 For example, `A` would be represented as `0`. `B` would be `1`, `C` would be `2`, and so on.
+
 
 ### Flags
 `USEICON`\
