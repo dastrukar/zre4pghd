@@ -136,10 +136,28 @@ class REItemThinker : Thinker {
     bool usecustom;
 }
 
+class REPlayerTracker : Inventory {
+    Default {
+        -Inventory.InvBar
+        +Inventory.Untossable
+        Inventory.Amount 1;
+        Inventory.MaxAmount 1;
+    }
+
+    States {
+        Spawn:
+            TNT1 A 0;
+            stop;
+    }
+}
+
 // Where the actors are assigned to each other
 class REItemHandler : EventHandler {
     array<REItemThinker> thinkers;
     array<REItemGlow> glows;
+    array<Actor> actors;
+    array<PlayerPawn> playernum;
+    bool players_sorted;
 
     // Checks if the class exists
     bool CheckClass(string s) {
@@ -152,22 +170,28 @@ class REItemHandler : EventHandler {
         return CVar.GetCVar("repkup_debug", players[consoleplayer]).GetBool();
     }
 
+    void ReloadThinkers() {
+        WorldEvent e;
+        WorldLoaded(e);
+    }
+
     void ReloadAllItemGlows() {
-        array<REItemGlow> old_glows; old_glows.Copy(glows);
+        // Remove all glows
+        for (int i = 0; i < glows.Size(); i++) {
+            if (glows[i]) glows[i].Destroy();
+        }
         glows.Clear();
-        for (int g = 0; g < old_glows.Size(); g++) {
+
+        for (int a = 0; a < actors.Size(); a++) {
             for (int i = 0; i < thinkers.Size(); i++) {
                 // null check
-                if (!(old_glows[g])) break;
+                if (!actors[a]) continue;
                 let info  = thinkers[i];
-                let T     = old_glows[g].master;
-                let found = SummonGlow(thinkers[i], T);
+                let T     = actors[a];
+                let found = SummonGlow(info, T);
 
                 // Don't keep looping after found
-                if (found) {
-                    old_glows[g].Destroy();
-                    break;
-                }
+                if (found) break;
             }
         }
     }
@@ -207,9 +231,6 @@ class REItemHandler : EventHandler {
 
     override void WorldLoaded(WorldEvent e) {
         // Just in case?
-        for (int i = 0; i < thinkers.size(); i++) {
-            if (thinkers[i]) thinkers[i].Destroy();
-        }
         thinkers.Clear();
 
         // Get all the stuff
@@ -285,6 +306,10 @@ class REItemHandler : EventHandler {
     override void WorldThingSpawned(WorldEvent e) {
         let T = e.Thing;
 
+        // Player is handled in PlayerSpawned, not here
+        if (T is "PlayerPawn") return;
+        actors.Push(T);
+
         for (int i = 0; i < thinkers.Size(); i++) {
             let info = thinkers[i];
             let found = SummonGlow(info, T);
@@ -294,11 +319,46 @@ class REItemHandler : EventHandler {
         }
     }
 
+    override void PlayerSpawned(PlayerEvent e) {
+        // Apparently, the player only "spawns" once, so this is the alternative I have to take
+        playernum.push(players[e.PlayerNumber].mo);
+    }
+
     override void NetworkProcess(ConsoleEvent e) {
         // Commands are fun
         if (e.name ~== "repkup_reload") {
             // Hope you don't mind the lag
+            ReloadThinkers();
             ReloadAllItemGlows();
+        }
+    }
+
+    override void WorldTick() {
+        // Player's inventory doesn't initialize immediately, curse you inventory system.
+        // Also, I have no idea why, but if I summoned the glows when maptime = 0, the pistol will overlay the glow.
+        // Why is this a thing???
+        // Better safe than sorry, I guess.
+        // Hopefully the player doesn't drop anything during the very first tic :]
+        if (level.maptime == 1) {
+            for (int i = 0; i < playernum.size(); i++) {
+                let player = playernum[i];
+                if (player.FindInventory("REPlayerTracker")) {
+                    for (Inventory item = player.inv; item != null; item = item.inv) {
+                        let item = Actor(item);
+                        actors.Push(item);
+                        for (int i = 0; i < thinkers.Size(); i++) {
+                            let info  = thinkers[i];
+                            let found = SummonGlow(info, item);
+
+                            // Don't keep looping after found
+                            if (found) break;
+                        }
+                    }
+                } else {
+                    // First time?
+                    player.SetInventory("REPlayerTracker", 1);
+                }
+            }
         }
     }
 }
