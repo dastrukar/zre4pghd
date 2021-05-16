@@ -207,6 +207,9 @@ class REItemHandler : EventHandler {
 
     override void WorldLoaded(WorldEvent e) {
         // Just in case?
+        for (int i = 0; i < thinkers.size(); i++) {
+            if (thinkers[i]) thinkers[i].Destroy();
+        }
         thinkers.Clear();
 
         // Get all the stuff
