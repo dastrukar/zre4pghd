@@ -2,12 +2,14 @@ version 4.5
 
 class REItemHalo : Actor {
     Actor master;
+    TextureID custom;
     int ticker;
     int time;
     int tic;
     int frametime;
     int truesprite;
     bool useicon;
+    bool usecustom;
     string classname;
     float actualalpha;
     array<int> frames;
@@ -40,7 +42,8 @@ class REItemHalo : Actor {
             // Hide if no sprite
             if (
                 master.CurState.sprite == 0 &&
-                !(useicon && !Inventory(master).owner)
+                !(useicon && !Inventory(master).owner) &&
+                !usecustom
             ) {
                 alpha = 0;
                 return;
@@ -51,26 +54,28 @@ class REItemHalo : Actor {
             // Don't always do math stuff
             ticker++;
             if (ticker == 16) {
-                if (useicon && Inventory(master).icon) {
-                    AdjustSprite(Inventory(master).icon);
-                    ticker = 0;
+                TextureID id;
+                if (usecustom) {
+                    id = custom;
+                } else if (useicon && Inventory(master).icon) {
+                    id = Inventory(master).icon;
                 } else if (master.CurState.ValidateSpriteFrame()) {
-                    AdjustSprite(master.CurState.GetSpriteTexture(master.SpriteRotation));
-                    ticker = 0;
+                    id = master.CurState.GetSpriteTexture(master.SpriteRotation);
                 } else if (master.CurState.NextState) {
-                    AdjustSprite(master.CurState.NextState.GetSpriteTexture(master.SpriteRotation));
-                    ticker = 0;
+                    id = master.CurState.NextState.GetSpriteTexture(master.SpriteRotation);
                 } else {
                     scale  = (1, 1);
-                    ticker = 0;
                 }
+
+                if (id) AdjustSprite(id);
+                ticker = 0;
             }
             // Make sure halo thing is on the item
             if (master.pos != pos) {
                 SetOrigin(master.pos, true);
             }
         } else {
-            console.PrintF(string.Format("Bye, %s!", classname));
+            if (REItemHandler.CheckDebug()) console.PrintF(string.Format("Bye, %s!", classname));
             destroy();
         }
     }
@@ -119,9 +124,11 @@ class REUselessThingJustForLoadingSprites : Actor {
 class REItemThinker : Thinker {
     array<string> classes;
     array<int> frames;
+    TextureID custom;
     string sprite;
     int frametime;
     bool useicon;
+    bool usecustom;
 }
 
 // Where the actors are assigned to each other
@@ -133,6 +140,10 @@ class REItemHandler : EventHandler {
         class a;
         a = s;
         return (a);
+    }
+
+    static bool CheckDebug() {
+        return CVar.GetCVar("repkup_debug", players[consoleplayer]).GetBool();
     }
 
     override void WorldLoaded(WorldEvent e) {
@@ -152,16 +163,48 @@ class REItemHandler : EventHandler {
 
             contents[i].Split(temp, ":");
             // Does it have enough arguments?
-            if (temp.size() < 4) {
+            if (temp.Size() < 4) {
+                if (temp.Size() != 0 && i != (contents.Size() - 1)) {
+                    Console.PrintF(string.Format("Group at line %d provided %d arguments, but a minimum of 4 is required.", i+1, temp.Size()));
+                    Console.PrintF(string.Format("Ignoring group at line %d.", i+1));
+                }
                 continue;
             }
+
+            // Just in case
+            bool is_null = false;
+            for (int a = 0; a < temp.Size(); a++) {
+                if (temp[a] == "") {
+                    Console.PrintF(string.Format("Group at line %d provided %d arguments, but argument %d is null.", i+1, temp.Size(), a+1));
+                    Console.PrintF(string.Format("Ignoring group at line %d.", i+1));
+                    is_null = true;
+                    break;
+                }
+            }
+
+            if (is_null) continue;
 
             let t = new("REItemThinker");
             temp[0].Split(c_temp, ",");
             t.sprite = temp[1];
             temp[2].Split(i_temp, ",");
             t.frametime = temp[3].ToInt(10);
-            t.useicon = (temp.Size() > 4);
+
+            if (temp.Size() > 4) {
+                let flag = temp[4];
+                if (flag == "USEICON") {
+                    t.useicon = true;
+                } else if (flag == "USECUSTOM") {
+                    if (temp.Size() > 5) {
+                        t.usecustom = true;
+                        t.custom = TexMan.CheckForTexture(temp[5]);
+                    } else {
+                        Console.PrintF(string.Format("Group at line %d used flag \"usecustom\", but didn't provide an argument afterwards.\nIgnoring flag.", i+1));
+                    }
+                } else {
+                    Console.PrintF(string.Format("Group at line %d used an invalid flag.\nIgnoring flag.", i+1));
+                }
+            }
 
             // If there's an invalid class, just remove it
             for (int i = 0; i < c_temp.Size(); i++) {
@@ -180,7 +223,6 @@ class REItemHandler : EventHandler {
     override void WorldThingSpawned(WorldEvent e) {
         let T = e.Thing;
 
-        if (T is "UaS_Consumable") console.printf("HI");
         for (int i = 0; i < thinkers.Size(); i++) {
             let info = thinkers[i];
 
@@ -193,15 +235,19 @@ class REItemHandler : EventHandler {
                         found = true;
                         break;
                     }
-                    if (info.useicon) console.printf("USE ICON");
-                    console.PrintF(string.Format("Found %s", T.GetClassName()));
+                    if (CheckDebug()) {
+                        if (info.useicon) console.printf("USE ICON");
+                        console.PrintF(string.Format("Found %s", T.GetClassName()));
+                    }
                     let halo = REItemHalo(Actor.Spawn("REItemHalo", T.pos));
                     halo.master = T;
                     halo.truesprite = Actor.GetSpriteIndex(info.sprite);
-                    halo.classname = T.GetClassName();
+                    halo.classname  = T.GetClassName();
                     halo.frames.Copy(info.frames);
                     halo.frametime = info.frametime;
-                    halo.useicon = info.useicon;
+                    halo.useicon   = info.useicon;
+                    halo.usecustom = info.usecustom;
+                    halo.custom    = info.custom;
                     found = true;
                     break;
                 }

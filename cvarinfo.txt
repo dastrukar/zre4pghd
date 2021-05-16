@@ -1,2 +1,4 @@
 user float repkup_alpha=0.50;
 user float repkup_fadein=0.01;
+
+user bool repkup_debug=false;
