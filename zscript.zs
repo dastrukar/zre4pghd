@@ -1,6 +1,6 @@
 version 4.5
 
-class REItemHalo : Actor {
+class REItemGlow : Actor {
     Actor master;
     TextureID custom;
     int ticker;
@@ -14,8 +14,8 @@ class REItemHalo : Actor {
     float actualalpha;
     array<int> frames;
 
-    CVar repkup_alpha;
-    CVar repkup_fadein;
+    transient CVar repkup_alpha;
+    transient CVar repkup_fadein;
 
     void Debugger() {
         TextureID texid;
@@ -32,12 +32,17 @@ class REItemHalo : Actor {
         tic    = random(0, frametime);
         alpha  = 0;
         frame  = 0;
-        repkup_alpha  = CVar.GetCVar("repkup_alpha", players[consoleplayer]);
-        repkup_fadein = CVar.GetCVar("repkup_fadein", players[consoleplayer]);
     }
 
     override void Tick() {
         Super.Tick();
+
+        // Initialize CVars
+        if (!repkup_alpha) {
+            repkup_alpha  = CVar.GetCVar("repkup_alpha", players[consoleplayer]);
+            repkup_fadein = CVar.GetCVar("repkup_fadein", players[consoleplayer]);
+        }
+
         if (master) {
             // Hide if no sprite
             if (
@@ -76,7 +81,7 @@ class REItemHalo : Actor {
             }
         } else {
             if (REItemHandler.CheckDebug()) console.PrintF(string.Format("Bye, %s!", classname));
-            destroy();
+            Destroy();
         }
     }
 
@@ -134,6 +139,7 @@ class REItemThinker : Thinker {
 // Where the actors are assigned to each other
 class REItemHandler : EventHandler {
     array<REItemThinker> thinkers;
+    array<REItemGlow> glows;
 
     // Checks if the class exists
     bool CheckClass(string s) {
@@ -144,6 +150,59 @@ class REItemHandler : EventHandler {
 
     static bool CheckDebug() {
         return CVar.GetCVar("repkup_debug", players[consoleplayer]).GetBool();
+    }
+
+    void ReloadAllItemGlows() {
+        array<REItemGlow> old_glows; old_glows.Copy(glows);
+        glows.Clear();
+        for (int g = 0; g < old_glows.Size(); g++) {
+            for (int i = 0; i < thinkers.Size(); i++) {
+                // null check
+                if (!(old_glows[g])) break;
+                let info  = thinkers[i];
+                let T     = old_glows[g].master;
+                let found = SummonGlow(thinkers[i], T);
+
+                // Don't keep looping after found
+                if (found) {
+                    old_glows[g].Destroy();
+                    break;
+                }
+            }
+        }
+    }
+
+    // Returns true if successfully summoned
+    bool SummonGlow(REItemThinker info, Actor T) {
+        bool found = false;
+        for (int i = 0; i < info.classes.Size(); i++) {
+            if (T is info.classes[i]) {
+                // Is this a blacklisted item?
+                if (info.sprite == "TNT1") {
+                    // Don't spawn anything
+                    found = true;
+                    break;
+                }
+                if (CheckDebug()) {
+                    if (info.useicon) console.printf("USE ICON");
+                    console.PrintF(string.Format("Found %s", T.GetClassName()));
+                }
+                let glow = REItemGlow(Actor.Spawn("REItemGlow", T.pos));
+                glow.master = T;
+                glow.truesprite = Actor.GetSpriteIndex(info.sprite);
+                glow.classname  = T.GetClassName();
+                glow.frames.Copy(info.frames);
+                glow.frametime = info.frametime;
+                glow.useicon   = info.useicon;
+                glow.usecustom = info.usecustom;
+                glow.custom    = info.custom;
+                glows.Push(glow);
+                found = true;
+                break;
+            }
+        }
+
+        return found;
     }
 
     override void WorldLoaded(WorldEvent e) {
@@ -225,36 +284,18 @@ class REItemHandler : EventHandler {
 
         for (int i = 0; i < thinkers.Size(); i++) {
             let info = thinkers[i];
+            let found = SummonGlow(info, T);
 
-            bool found = false;
-            for (int i = 0; i < info.classes.Size(); i++) {
-                if (T is info.classes[i]) {
-                    // Is this a blacklisted item?
-                    if (info.sprite == "TNT1") {
-                        // Don't spawn anything
-                        found = true;
-                        break;
-                    }
-                    if (CheckDebug()) {
-                        if (info.useicon) console.printf("USE ICON");
-                        console.PrintF(string.Format("Found %s", T.GetClassName()));
-                    }
-                    let halo = REItemHalo(Actor.Spawn("REItemHalo", T.pos));
-                    halo.master = T;
-                    halo.truesprite = Actor.GetSpriteIndex(info.sprite);
-                    halo.classname  = T.GetClassName();
-                    halo.frames.Copy(info.frames);
-                    halo.frametime = info.frametime;
-                    halo.useicon   = info.useicon;
-                    halo.usecustom = info.usecustom;
-                    halo.custom    = info.custom;
-                    found = true;
-                    break;
-                }
-            }
-
-            // Don't keep looping if found
+            // Don't keep looping after found
             if (found) break;
+        }
+    }
+
+    override void NetworkProcess(ConsoleEvent e) {
+        // Commands are fun
+        if (e.name ~== "repkup_reload") {
+            // Hope you don't mind the lag
+            ReloadAllItemGlows();
         }
     }
 }
