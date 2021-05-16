@@ -12,6 +12,9 @@ class REItemHalo : Actor {
     float actualalpha;
     array<int> frames;
 
+    CVar repkup_alpha;
+    CVar repkup_fadein;
+
     void Debugger() {
         TextureID texid;
         bool temp;
@@ -27,7 +30,8 @@ class REItemHalo : Actor {
         tic    = random(0, frametime);
         alpha  = 0;
         frame  = 0;
-        actualalpha = 0.50;
+        repkup_alpha  = CVar.GetCVar("repkup_alpha", players[consoleplayer]);
+        repkup_fadein = CVar.GetCVar("repkup_fadein", players[consoleplayer]);
     }
 
     override void Tick() {
@@ -41,7 +45,8 @@ class REItemHalo : Actor {
                 alpha = 0;
                 return;
             }
-            if (alpha < actualalpha) alpha += 0.01; // Fade in
+            if (alpha < repkup_alpha.GetFloat()) alpha += repkup_fadein.GetFloat(); // Fade in
+            if (alpha >= repkup_alpha.GetFloat()) alpha = repkup_alpha.GetFloat(); // Just in case
 
             // Don't always do math stuff
             ticker++;

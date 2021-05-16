@@ -1,0 +1,19 @@
+OptionValue "YN" {
+    0, "No"
+    1, "Yes"
+}
+
+OptionMenu "PKUPOptions" {
+    Title "Pickup Glow options"
+
+    Slider "Glow transparency alpha", "repkup_alpha", 0.00, 1.00, 0.05, 2
+    Slider "Increment alpha per tic", "repkup_fadein", 0.00, 1.00, 0.01, 2
+
+    StaticText " "
+    StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "white"
+    StaticText "Refer to readme.md if you get lost.", "white"
+}
+
+AddOptionMenu "OptionsMenu" {
+    Submenu "Pickup Glow options", "PKUPOptions"
+}
