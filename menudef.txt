@@ -10,6 +10,10 @@ OptionMenu "PKUPOptions" {
     Slider "Increment alpha per tic", "repkup_fadein", 0.00, 1.00, 0.01, 2
 
     StaticText " "
+    StaticText "-Console commands-", "blue"
+    StaticText "repkup_reload : Reloads repkup_groups.txt (may cause lag)", "white"
+    StaticText " "
+    StaticText " "
     StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "white"
     StaticText "Refer to readme.md if you get lost.", "white"
 }
