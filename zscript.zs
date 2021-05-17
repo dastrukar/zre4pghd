@@ -26,6 +26,10 @@ class REItemGlow : Actor {
         Console.PrintF(string.format("%s %d %d", n, scl.x, scl.y));
     }
 
+    bool CheckIfTNT(State base) {
+        return (TexMan.GetName(base.GetSpriteTexture(master.SpriteRotation)) != "TNT1A0");
+    }
+
     override void BeginPlay() {
         Super.BeginPlay();
         ticker = 0;
@@ -59,15 +63,29 @@ class REItemGlow : Actor {
             ticker++;
             if (ticker == 16) {
                 TextureID id;
+
+                // What a thrill...
                 if (usecustom) {
                     id = custom;
                 } else if (useicon && Inventory(master).icon) {
                     id = Inventory(master).icon;
-                } else if (master.CurState.ValidateSpriteFrame()) {
-                    id = master.CurState.GetSpriteTexture(master.SpriteRotation);
-                } else if (master.CurState.NextState) {
+                } else if (
+                    master.ResolveState("spawn") &&
+                    CheckIfTNT(master.ResolveState("spawn"))
+                ) {
+                    id = master.ResolveState("spawn").GetSpriteTexture(master.SpriteRotation);
+                } else if (
+                    master.CurState &&
+                    CheckIfTNT(master.CurState)
+                ) {
+                    id = master.CurState.NextState.GetSpriteTexture(master.SpriteRotation);
+                } else if (
+                    master.CurState.NextState &&
+                    CheckIfTNT(master.CurState.NextState)
+                ) {
                     id = master.CurState.NextState.GetSpriteTexture(master.SpriteRotation);
                 } else {
+                    // fuck it
                     scale  = (1, 1);
                 }
 
@@ -86,6 +104,7 @@ class REItemGlow : Actor {
 
     void AdjustSprite(TextureID texid) {
         //let n = master.GetClassName();
+        let size_x  = TexMan.GetSize(texid);
         let size    = TexMan.GetScaledSize(texid);
         let offset  = TexMan.GetScaledOffset(texid);
         let m_scale = master.scale;
