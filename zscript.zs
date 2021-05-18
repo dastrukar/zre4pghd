@@ -7,12 +7,13 @@ class REItemGlow : Actor {
     int time;
     int tic;
     int frametime;
-    int truesprite;
     bool useicon;
     bool usecustom;
+    string truesprite;
     string classname;
     float actualalpha;
     array<int> frames;
+    static const string REPKUP_FRAMEINDEX[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 
     transient CVar repkup_alpha;
     transient CVar repkup_fadein;
@@ -113,7 +114,9 @@ class REItemGlow : Actor {
         if (repkup_overridescale.GetBool()) {
             scale = (repkup_scalex.GetFloat(), 1);
         } else {
-            let sc = (size.x / 30 * m_scale.x);
+            let sprite_name = string.Format("%s%s0", truesprite, REPKUP_FRAMEINDEX[frames[tic-1]]);
+            let s = TexMan.GetScaledSize(TexMan.CheckForTexture(sprite_name));
+            let sc = (size.x / s.x * m_scale.x);
             scale = (sc+0.05, 1);
         }
         SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * m_scale.x, 0);
@@ -122,7 +125,7 @@ class REItemGlow : Actor {
     // Should be called every tick
     action void A_DoAnimate() {
         if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
-        invoker.sprite = invoker.truesprite;
+        invoker.sprite = Actor.GetSpriteIndex(invoker.truesprite);
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
         invoker.tic++;
@@ -249,7 +252,7 @@ class REItemHandler : StaticEventHandler {
                 }
                 let glow = REItemGlow(Actor.Spawn("REItemGlow", T.pos));
                 glow.master = T;
-                glow.truesprite = Actor.GetSpriteIndex(info.sprite);
+                glow.truesprite = info.sprite;
                 glow.classname  = T.GetClassName();
                 glow.frames.Copy(info.frames);
                 glow.frametime = info.frametime;
