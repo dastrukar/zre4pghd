@@ -12,9 +12,15 @@ Known issues:
 ## Default item colours
 * **WHITE**: Skull keys and Computer Maps (keycards not included due to weird bug)
 * **GREEN**: Medical stuff
-* **LIGHT BLUE** Armour and backpacks
+* **LIGHT BLUE**: Armour and backpacks
 * **BLUE**: Weapons
 * **RED**: Ammo and any other pickups
+
+## Console commands
+* `repkup_reload`: Reloads all glow effects and groups. *(may cause lag)*
+* `repkup_clear`: Removes all glow effects. Disables the mod.
+
+*Note: Latest version breaks save? Just use `repkup_clear` before updating! (provided the version you have has it)*
 
 ## Direct link for mobile users
 [`Latest master`](https://github.com/dastrukar/zre4pghd/archive/refs/heads/master.zip)
@@ -22,7 +28,7 @@ Known issues:
 ## Custom stuff
 All custom stuff goes into `repkup_groups.txt`.
 
-## Syntax:
+### Syntax:
 *I hope you're using a monospace font while reading this.*
 ```
 <CLASS1>,[CLASS2],[CLASS3],[CLASS4],...:<SPRITENAME>:<FRAME1>,[FRAME2],[FRAME3],[FRAME4],...:<TICS>:[FLAG]:[FLAGARG]
