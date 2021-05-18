@@ -132,7 +132,6 @@ class REItemGlow : Actor {
         +Actor.NOBLOCKMAP
         +Actor.NOGRAVITY
         +Actor.FORCEYBILLBOARD
-        +Actor.RANDOMIZE
         RenderStyle "Translucent";
     }
 
