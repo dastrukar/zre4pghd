@@ -214,11 +214,10 @@ class REItemHandler : StaticEventHandler {
             let infos = ThinkerIterator.Create("REItemThinker");
             let info = infos.Next();
             while (info) {
-                console.printf("please");
                 let found = SummonGlow(REItemThinker(info), Actor(a));
 
                 // Don't keep looping after found
-                if (found) { console.printf("break"); break; }
+                if (found) break;
                 info = infos.Next();
             }
 
@@ -363,13 +362,14 @@ class REItemHandler : StaticEventHandler {
         // Commands are fun
         if (e.name ~== "repkup_reload") {
             // Hope you don't mind the lag
+            no_glows = false;
             ReloadThinkers();
             ReloadAllItemGlows();
-            no_glows = false;
         } else if (e.name ~== "repkup_clear") {
             if (timer > 0) {
                 ClearAll();
                 Console.PrintF("Pickup glows disabled. Use \"repkup_reload\" to re-enable pickup glows.");
+                timer = 0;
             } else {
                 Console.PrintF("You're about to disable all pickup glows.");
                 Console.PrintF("Please re-enter \"repkup_clear\" again in 30 seconds to confirm that you actually want to do this.");
@@ -384,7 +384,7 @@ class REItemHandler : StaticEventHandler {
         // Why is this a thing???
         // Better safe than sorry, I guess.
         // Hopefully the player doesn't drop anything during the very first tic :]
-        if (level.maptime == 2) {
+        if (level.maptime == 2 && !no_glows) {
             // No need for complex stuff, just do a quick reload ;]
             ReloadAllItemGlows();
         }
