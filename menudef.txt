@@ -9,9 +9,16 @@ OptionMenu "PKUPOptions" {
     Slider "Glow transparency alpha", "repkup_alpha", 0.00, 1.00, 0.05, 2
     Slider "Increment alpha per tic", "repkup_fadein", 0.00, 1.00, 0.01, 2
 
+    Option "Override Automatic Scale", "repkup_overridescale", "YN"
+    Slider "Sprite Scale X", "repkup_scalex", 0.00, 1.00, 0.01, 2, "repkup_overridescale"
+
     StaticText " "
     StaticText "-Console commands-", "blue"
-    StaticText "repkup_reload : Reloads repkup_groups.txt (may cause lag)", "white"
+    StaticText ":repkup_reload:", "yellow"
+    StaticText "Reloads repkup_groups.txt (may cause lag)", "white"
+    StaticText " "
+    StaticText ":repkup_clear:", "yellow"
+    StaticText "Removes all glows and thinkers. Disables the mod.", "white"
     StaticText " "
     StaticText " "
     StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "white"

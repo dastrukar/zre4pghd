@@ -1,4 +1,6 @@
 user float repkup_alpha=0.50;
 user float repkup_fadein=0.01;
+user float repkup_scalex=1.00;
 
+user bool repkup_overridescale=false;
 user bool repkup_debug=false;

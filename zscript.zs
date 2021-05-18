@@ -16,6 +16,8 @@ class REItemGlow : Actor {
 
     transient CVar repkup_alpha;
     transient CVar repkup_fadein;
+    transient CVar repkup_scalex;
+    transient CVar repkup_overridescale;
 
     void Debugger() {
         TextureID texid;
@@ -45,6 +47,8 @@ class REItemGlow : Actor {
         if (!repkup_alpha) {
             repkup_alpha  = CVar.GetCVar("repkup_alpha", players[consoleplayer]);
             repkup_fadein = CVar.GetCVar("repkup_fadein", players[consoleplayer]);
+            repkup_scalex = CVar.GetCVar("repkup_scalex", players[consoleplayer]);
+            repkup_overridescale = CVar.GetCVar("repkup_overridescale", players[consoleplayer]);
         }
 
         if (master) {
@@ -103,14 +107,15 @@ class REItemGlow : Actor {
     }
 
     void AdjustSprite(TextureID texid) {
-        //let n = master.GetClassName();
-        let size_x  = TexMan.GetSize(texid);
         let size    = TexMan.GetScaledSize(texid);
         let offset  = TexMan.GetScaledOffset(texid);
         let m_scale = master.scale;
-        //console.printf(string.format("%d %d %s %s", s.x, s.y, TexMan.GetName(texid), n));
-        let sc = (size.x / 30 * m_scale.x);
-        scale = (sc+0.05, 1);
+        if (repkup_overridescale.GetBool()) {
+            scale = (repkup_scalex.GetFloat(), 1);
+        } else {
+            let sc = (size.x / 30 * m_scale.x);
+            scale = (sc+0.05, 1);
+        }
         SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * m_scale.x, 0);
     }
 
