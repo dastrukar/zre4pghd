@@ -154,28 +154,12 @@ class REItemThinker : Thinker {
     bool usecustom;
 }
 
-class REPlayerTracker : Inventory {
-    Default {
-        -Inventory.InvBar
-        +Inventory.Untossable
-        Inventory.Amount 1;
-        Inventory.MaxAmount 1;
-    }
-
-    States {
-        Spawn:
-            TNT1 A 0;
-            stop;
-    }
-}
-
 // Where the actors are assigned to each other
-class REItemHandler : EventHandler {
-    array<REItemThinker> thinkers;
-    array<REItemGlow> glows;
-    array<Actor> actors;
+class REItemHandler : StaticEventHandler {
     array<PlayerPawn> playernum;
     bool players_sorted;
+    bool no_glows;
+    int timer;
 
     // Checks if the class exists
     bool CheckClass(string s) {
@@ -188,30 +172,61 @@ class REItemHandler : EventHandler {
         return CVar.GetCVar("repkup_debug", players[consoleplayer]).GetBool();
     }
 
+    // Say goodbye to all your glows :[
+    void ClearAll() {
+        // Remove all info thinkers
+        let infos = ThinkerIterator.Create("REItemThinker");
+        let info = infos.Next();
+        while (info) {
+            info.Destroy();
+            info = infos.Next();
+        }
+
+        infos.Destroy();
+
+        DeleteGlows();
+        no_glows = true;
+    }
+
     void ReloadThinkers() {
         WorldEvent e;
         WorldLoaded(e);
     }
 
-    void ReloadAllItemGlows() {
-        // Remove all glows
-        for (int i = 0; i < glows.Size(); i++) {
-            if (glows[i]) glows[i].Destroy();
+    // Remove all glows
+    void DeleteGlows() {
+        let glows = ThinkerIterator.Create("REItemGlow");
+        let glow = glows.Next();
+        while (glow) {
+            glow.Destroy();
+            glow = glows.Next();
         }
-        glows.Clear();
 
-        for (int a = 0; a < actors.Size(); a++) {
-            for (int i = 0; i < thinkers.Size(); i++) {
-                // null check
-                if (!actors[a]) continue;
-                let info  = thinkers[i];
-                let T     = actors[a];
-                let found = SummonGlow(info, T);
+        glows.Destroy();
+    }
+
+    void ReloadAllItemGlows() {
+        DeleteGlows();
+
+        let actors = ThinkerIterator.Create("Actor");
+        let a = actors.Next();
+        while (a) {
+            let infos = ThinkerIterator.Create("REItemThinker");
+            let info = infos.Next();
+            while (info) {
+                console.printf("please");
+                let found = SummonGlow(REItemThinker(info), Actor(a));
 
                 // Don't keep looping after found
-                if (found) break;
+                if (found) { console.printf("break"); break; }
+                info = infos.Next();
             }
+
+            a = actors.Next();
+            infos.Destroy();
         }
+
+        actors.Destroy();
     }
 
     // Returns true if successfully summoned
@@ -238,7 +253,6 @@ class REItemHandler : EventHandler {
                 glow.useicon   = info.useicon;
                 glow.usecustom = info.usecustom;
                 glow.custom    = info.custom;
-                glows.Push(glow);
                 found = true;
                 break;
             }
@@ -248,8 +262,14 @@ class REItemHandler : EventHandler {
     }
 
     override void WorldLoaded(WorldEvent e) {
-        // Just in case?
-        thinkers.Clear();
+        if (no_glows) return;
+
+        let infos = ThinkerIterator.Create("REItemThinker");
+        let info = infos.Next();
+        while (info) {
+            info.Destroy();
+            info = infos.Next();
+        }
 
         // Get all the stuff
         array<string> contents; contents.Clear();
@@ -317,29 +337,26 @@ class REItemHandler : EventHandler {
             for (int i = 0; i < i_temp.Size(); i++) {
                 t.frames.Push(i_temp[i].ToInt(10));
             }
-            thinkers.Push(t);
+
+            let iter = ThinkerIterator.Create("REItemThinker");
         }
     }
 
     override void WorldThingSpawned(WorldEvent e) {
+        if (no_glows || level.maptime < 2) return;
         let T = e.Thing;
 
-        // Player is handled in PlayerSpawned, not here
-        if (T is "PlayerPawn") return;
-        actors.Push(T);
-
-        for (int i = 0; i < thinkers.Size(); i++) {
-            let info = thinkers[i];
-            let found = SummonGlow(info, T);
+        let infos = ThinkerIterator.Create("REItemThinker");
+        let info = infos.Next();
+        while (info) {
+            let found = SummonGlow(REItemThinker(info), T);
 
             // Don't keep looping after found
             if (found) break;
+            info = infos.Next();
         }
-    }
 
-    override void PlayerSpawned(PlayerEvent e) {
-        // Apparently, the player only "spawns" once, so this is the alternative I have to take
-        playernum.push(players[e.PlayerNumber].mo);
+        infos.Destroy();
     }
 
     override void NetworkProcess(ConsoleEvent e) {
@@ -348,6 +365,16 @@ class REItemHandler : EventHandler {
             // Hope you don't mind the lag
             ReloadThinkers();
             ReloadAllItemGlows();
+            no_glows = false;
+        } else if (e.name ~== "repkup_clear") {
+            if (timer > 0) {
+                ClearAll();
+                Console.PrintF("Pickup glows disabled. Use \"repkup_reload\" to re-enable pickup glows.");
+            } else {
+                Console.PrintF("You're about to disable all pickup glows.");
+                Console.PrintF("Please re-enter \"repkup_clear\" again in 30 seconds to confirm that you actually want to do this.");
+                timer = 1050;
+            }
         }
     }
 
@@ -358,25 +385,10 @@ class REItemHandler : EventHandler {
         // Better safe than sorry, I guess.
         // Hopefully the player doesn't drop anything during the very first tic :]
         if (level.maptime == 2) {
-            for (int i = 0; i < playernum.size(); i++) {
-                let player = playernum[i];
-                if (player.FindInventory("REPlayerTracker")) {
-                    for (Inventory item = player.inv; item != null; item = item.inv) {
-                        let item = Actor(item);
-                        actors.Push(item);
-                        for (int i = 0; i < thinkers.Size(); i++) {
-                            let info  = thinkers[i];
-                            let found = SummonGlow(info, item);
-
-                            // Don't keep looping after found
-                            if (found) break;
-                        }
-                    }
-                } else {
-                    // First time?
-                    player.SetInventory("REPlayerTracker", 1);
-                }
-            }
+            // No need for complex stuff, just do a quick reload ;]
+            ReloadAllItemGlows();
         }
+
+        if (timer > 0) timer--;
     }
 }
