@@ -1,0 +1,2 @@
+alias repkup_reload "netevent repkup_reload"
+alias repkup_clear "netevent repkup_clear"
