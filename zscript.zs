@@ -7,6 +7,7 @@ class REItemGlow : Actor {
     int time;
     int tic;
     int frametime;
+    int spriteindex;
     bool useicon;
     bool usecustom;
     string truesprite;
@@ -125,7 +126,7 @@ class REItemGlow : Actor {
     // Should be called every tick
     action void A_DoAnimate() {
         if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
-        invoker.sprite = Actor.GetSpriteIndex(invoker.truesprite);
+        invoker.sprite = invoker.spriteindex;
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
         invoker.tic++;
@@ -252,8 +253,9 @@ class REItemHandler : StaticEventHandler {
                 }
                 let glow = REItemGlow(Actor.Spawn("REItemGlow", T.pos));
                 glow.master = T;
-                glow.truesprite = info.sprite;
-                glow.classname  = T.GetClassName();
+                glow.truesprite  = info.sprite;
+                glow.spriteindex = Actor.GetSpriteIndex(info.sprite);
+                glow.classname   = T.GetClassName();
                 glow.frames.Copy(info.frames);
                 glow.frametime = info.frametime;
                 glow.useicon   = info.useicon;
