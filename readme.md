@@ -19,12 +19,13 @@ Known issues:
 ## Direct link for mobile users
 [`Latest master`](https://github.com/dastrukar/zre4pghd/archive/refs/heads/master.zip)
 
-## Syntax for custom stuff
+## Custom stuff
 All custom stuff goes into `repkup_groups.txt`.
 
+## Syntax:
 *I hope you're using a monospace font while reading this.*
 ```
-<CLASS1>,[CLASS2],[CLASS3],[CLASS4],...:<SPRITENAME>:<FRAME1>,[FRAME2],[FRAME3],[FRAME4],...:<TICS>:[FLAG]
+<CLASS1>,[CLASS2],[CLASS3],[CLASS4],...:<SPRITENAME>:<FRAME1>,[FRAME2],[FRAME3],[FRAME4],...:<TICS>:[FLAG]:[FLAGARG]
 
 
 Terrible explanation:
@@ -46,7 +47,8 @@ The class name.
 
 
 `SPRITENAME`\
-The name of the sprite.
+The name of the sprite.\
+If the sprite used is `TNT1A0`, the group becomes a blacklist.
 
 For example:
 * TNT1A0's name would be, "TNT1".
