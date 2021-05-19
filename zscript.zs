@@ -371,13 +371,18 @@ class REItemHandler : StaticEventHandler {
         // Commands are fun
         if (e.name ~== "repkup_reload") {
             // Hope you don't mind the lag
-            no_glows = false;
+            if (no_glows) {
+                no_glows = false;
+                Console.PrintF("Pickup glows enabled. Use \"repkup_clear\" to disable pickup glows.");
+            }
+            Console.PrintF("Reloading repkup_groups.txt...");
             ReloadThinkers();
+            Console.PrintF("Reloading all glow effects...");
             ReloadAllItemGlows();
         } else if (e.name ~== "repkup_clear") {
             if (timer > 0) {
                 ClearAll();
-                Console.PrintF("Pickup glows disabled. Use \"repkup_reload\" to re-enable pickup glows.");
+                Console.PrintF("Pickup glows disabled. Use \"repkup_reload\" to enable pickup glows.");
                 timer = 0;
             } else {
                 Console.PrintF("You're about to disable all pickup glows.");

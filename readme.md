@@ -6,6 +6,8 @@ A simple mod that adds Resident Evil 4/5 styled glowing thing on pickups.
 This mod is intended to run with Hideous Destructor.\
 While it can technically run without it, it's not recommended.
 
+Should work on saves without the mod. *(just make sure to use `repkup_reload`)*
+
 Known issues:
 * After completing a map, the player's items *might* have their sprite appear in front of the glow, instead of being behind it. I still have no idea why this occurs. *(can be fixed by using "repkup_reload")*
 
@@ -17,8 +19,8 @@ Known issues:
 * **RED**: Ammo and any other pickups
 
 ## Console commands
-* `repkup_reload`: Reloads all glow effects and groups. *(may cause lag)*
-* `repkup_clear`: Removes all glow effects. Disables the mod.
+* `repkup_reload`: Reloads all glow effects and `repkup_groups.txt`. Enables the mod if disabled. *(may cause lag)*
+* `repkup_clear`: Removes all glow effects and thinkers. Disables the mod.
 
 *Note: Latest version breaks save? Just use `repkup_clear` before updating! (provided the version you have has it)*
 
