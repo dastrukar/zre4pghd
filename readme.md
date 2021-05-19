@@ -27,7 +27,7 @@ Known issues:
 ## Direct link for mobile users
 [`Latest master`](https://github.com/dastrukar/zre4pghd/archive/refs/heads/master.zip)
 
-## Custom stuff
+## Custom sprite stuff
 All custom stuff goes into `repkup_groups.txt`.
 
 ### Syntax:
