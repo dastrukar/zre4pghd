@@ -177,7 +177,7 @@ class REItemHandler : StaticEventHandler {
     }
 
     static bool CheckDebug() {
-        return CVar.GetCVar("repkup_debug", players[consoleplayer]).GetBool();
+        return CVar.GetCVar("repkup_debug").GetBool();
     }
 
     // Say goodbye to all your glows :[
