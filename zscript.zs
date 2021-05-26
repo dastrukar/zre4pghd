@@ -115,7 +115,7 @@ class REItemGlow : Actor {
         if (repkup_overridescale.GetBool()) {
             scale = (repkup_scalex.GetFloat(), 1);
         } else {
-            let sprite_name = string.Format("%s%s0", truesprite, REPKUP_FRAMEINDEX[frames[tic-1]]);
+            let sprite_name = string.Format("%s%s0", truesprite, REPKUP_FRAMEINDEX[frames[tic]]);
             let s = TexMan.GetScaledSize(TexMan.CheckForTexture(sprite_name));
             let sc = (size.x / s.x * m_scale.x);
             scale = (sc+0.05, 1);
@@ -125,11 +125,11 @@ class REItemGlow : Actor {
 
     // Should be called every tick
     action void A_DoAnimate() {
-        if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
         invoker.sprite = invoker.spriteindex;
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
         invoker.tic++;
+        if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
     }
 
     Default {
