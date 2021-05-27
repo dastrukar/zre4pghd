@@ -4,7 +4,6 @@ class REItemGlow : Actor {
     Actor master;
     TextureID custom;
     int ticker;
-    int time;
     int tic;
     int frametime;
     int spriteindex;
@@ -15,11 +14,6 @@ class REItemGlow : Actor {
     float actualalpha;
     array<int> frames;
     static const string REPKUP_FRAMEINDEX[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
-
-    transient CVar repkup_alpha;
-    transient CVar repkup_fadein;
-    transient CVar repkup_scalex;
-    transient CVar repkup_overridescale;
 
     void Debugger() {
         TextureID texid;
@@ -35,23 +29,15 @@ class REItemGlow : Actor {
     }
 
     override void BeginPlay() {
-        Super.BeginPlay();
+        //Super.BeginPlay();
         ticker = 0;
-        tic    = random(0, frametime);
+        tic    = 0; //random(0, frametime);
         alpha  = 0;
         frame  = 0;
     }
 
     override void Tick() {
         Super.Tick();
-
-        // Initialize CVars
-        if (!repkup_alpha) {
-            repkup_alpha  = CVar.GetCVar("repkup_alpha", players[consoleplayer]);
-            repkup_fadein = CVar.GetCVar("repkup_fadein", players[consoleplayer]);
-            repkup_scalex = CVar.GetCVar("repkup_scalex", players[consoleplayer]);
-            repkup_overridescale = CVar.GetCVar("repkup_overridescale", players[consoleplayer]);
-        }
 
         if (master) {
             // Hide if no sprite
@@ -62,8 +48,15 @@ class REItemGlow : Actor {
                 alpha = 0;
                 return;
             }
-            if (alpha < repkup_alpha.GetFloat()) alpha += repkup_fadein.GetFloat(); // Fade in
-            if (alpha >= repkup_alpha.GetFloat()) alpha = repkup_alpha.GetFloat(); // Just in case
+
+            // Fade in
+            if (alpha < repkup_alpha) {
+                alpha += repkup_fadein;
+            }
+            // Just in case
+            if (alpha >= repkup_alpha) {
+                alpha = repkup_alpha;
+            }
 
             // Don't always do math stuff
             ticker++;
@@ -103,7 +96,7 @@ class REItemGlow : Actor {
                 SetOrigin(master.pos, true);
             }
         } else {
-            if (REItemHandler.CheckDebug()) console.PrintF(string.Format("Bye, %s!", classname));
+            if (repkup_debug) Console.PrintF(string.Format("Bye, %s!", classname));
             Destroy();
         }
     }
@@ -119,8 +112,8 @@ class REItemGlow : Actor {
         let size    = TexMan.GetScaledSize(texid);
         let offset  = TexMan.GetScaledOffset(texid);
         let m_scale = master.scale;
-        if (repkup_overridescale.GetBool()) {
-            scale = (repkup_scalex.GetFloat(), 1);
+        if (repkup_overridescale) {
+            scale = (repkup_scalex, 1);
         } else {
             ResetTic();
             let sprite_name = string.Format("%s%s0", truesprite, REPKUP_FRAMEINDEX[frames[tic]]);
@@ -146,12 +139,13 @@ class REItemGlow : Actor {
         +Actor.NOBLOCKMAP
         +Actor.NOGRAVITY
         +Actor.FORCEYBILLBOARD
+        -Actor.RANDOMIZE
         RenderStyle "Translucent";
     }
 
     States {
         Spawn:
-            TNT1 A 0 A_DoAnimate();
+            TNT1 A 1 A_DoAnimate();
             loop;
     }
 }
@@ -174,8 +168,6 @@ class REItemThinker : Thinker {
 
 // Where the actors are assigned to each other
 class REItemHandler : StaticEventHandler {
-    array<PlayerPawn> playernum;
-    bool players_sorted;
     bool no_glows;
     int timer;
 
@@ -184,10 +176,6 @@ class REItemHandler : StaticEventHandler {
         class a;
         a = s;
         return (a);
-    }
-
-    static bool CheckDebug() {
-        return CVar.GetCVar("repkup_debug").GetBool();
     }
 
     // Say goodbye to all your glows :[
@@ -257,10 +245,12 @@ class REItemHandler : StaticEventHandler {
                     found = true;
                     break;
                 }
-                if (CheckDebug()) {
+                if (repkup_debug) {
                     if (info.useicon) console.printf("USE ICON");
                     console.PrintF(string.Format("Found %s", T.GetClassName()));
                 }
+
+                // Set variables
                 let glow = REItemGlow(Actor.Spawn("REItemGlow", T.pos));
                 glow.master = T;
                 glow.truesprite  = info.sprite;
