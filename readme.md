@@ -1,7 +1,8 @@
 # RE4-like Pickup Glow for Hideous Destructor
 > Also known as zRE4PGHD
 
-A simple mod that adds Resident Evil 4/5 styled glowing thing on pickups.
+A simple mod that adds Resident Evil 4/5 styled glowing thing on pickups.\
+This mod is mostly client-side, and should run fine in multiplayer with other players not using it.
 
 This mod is intended to run with Hideous Destructor.\
 While it can technically run without it, it's not recommended.
