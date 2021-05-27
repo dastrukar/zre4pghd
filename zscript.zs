@@ -108,6 +108,13 @@ class REItemGlow : Actor {
         }
     }
 
+    void ResetTic() {
+        // please stop aborting vm thanks
+        if (tic == frames.Size()) {
+            tic = 0;
+        }
+    }
+
     void AdjustSprite(TextureID texid) {
         let size    = TexMan.GetScaledSize(texid);
         let offset  = TexMan.GetScaledOffset(texid);
@@ -115,6 +122,7 @@ class REItemGlow : Actor {
         if (repkup_overridescale.GetBool()) {
             scale = (repkup_scalex.GetFloat(), 1);
         } else {
+            ResetTic();
             let sprite_name = string.Format("%s%s0", truesprite, REPKUP_FRAMEINDEX[frames[tic]]);
             let s = TexMan.GetScaledSize(TexMan.CheckForTexture(sprite_name));
             let sc = (size.x / s.x * m_scale.x);
@@ -125,11 +133,13 @@ class REItemGlow : Actor {
 
     // Should be called every tick
     action void A_DoAnimate() {
+        // not taking any chances here
+        ResetTic();
         invoker.sprite = invoker.spriteindex;
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
         invoker.tic++;
-        if (invoker.tic == invoker.frames.Size()) invoker.tic = 0;
+        ResetTic();
     }
 
     Default {
