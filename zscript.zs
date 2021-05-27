@@ -140,6 +140,7 @@ class REItemGlow : Actor {
         +Actor.NOGRAVITY
         +Actor.FORCEYBILLBOARD
         -Actor.RANDOMIZE
+        FloatBobPhase 0; // i have no clue what this is, but it uses rng and causes desyncs in online play
         RenderStyle "Translucent";
     }
 
