@@ -134,12 +134,12 @@ class REItemGlow : Actor {
     // Should be called every tick
     action void A_DoAnimate() {
         // not taking any chances here
-        ResetTic();
+        invoker.ResetTic();
         invoker.sprite = invoker.spriteindex;
         invoker.frame = invoker.frames[invoker.tic];
         invoker.A_SetTics(invoker.frametime);
         invoker.tic++;
-        ResetTic();
+        invoker.ResetTic();
     }
 
     Default {
