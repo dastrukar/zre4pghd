@@ -1,5 +1,7 @@
 version 4.5
 
+const REPKUP_MAXRNG = 6;
+
 class REItemGlow : Actor {
     Actor master;
     TextureID custom;
@@ -29,9 +31,7 @@ class REItemGlow : Actor {
     }
 
     override void BeginPlay() {
-        //Super.BeginPlay();
         ticker = 0;
-        tic    = 0; //random(0, frametime);
         alpha  = 0;
         frame  = 0;
     }
@@ -171,6 +171,7 @@ class REItemThinker : Thinker {
 class REItemHandler : StaticEventHandler {
     bool no_glows;
     int timer;
+    int rngtic;
 
     // Checks if the class exists
     bool CheckClass(string s) {
@@ -235,6 +236,30 @@ class REItemHandler : StaticEventHandler {
         actors.Destroy();
     }
 
+    int GetRNGTic() {
+        rngtic++;
+        // Don't overflow
+        if (rngtic >= REPKUP_MAXRNG) {
+            rngtic = 0;
+        }
+        return rngtic;
+    }
+
+    // Because desyncs aren't fun
+    int PseudoRNG(int min, int max) {
+        int rngtable[REPKUP_MAXRNG] = {1, 1, 2, 3, 5, 8};
+
+        int result = min + rngtable[GetRNGTic()];
+        while (result > max) {
+            result -= rngtable[GetRNGTic()];
+
+            if (result < min) {
+                return min;
+            }
+        }
+        return result;
+    }
+
     // Returns true if successfully summoned
     bool SummonGlow(REItemThinker info, Actor T) {
         bool found = false;
@@ -262,6 +287,7 @@ class REItemHandler : StaticEventHandler {
                 glow.useicon   = info.useicon;
                 glow.usecustom = info.usecustom;
                 glow.custom    = info.custom;
+                glow.tic       = PseudoRNG(0, info.frametime); //Random(0, info.frametime);
                 found = true;
                 break;
             }
