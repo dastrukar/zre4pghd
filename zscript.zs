@@ -323,8 +323,8 @@ class REItemHandler : StaticEventHandler {
             // Does it have enough arguments?
             if (temp.Size() < 4) {
                 if (temp.Size() != 0 && i != (contents.Size() - 1)) {
-                    Console.PrintF(string.Format("Group at line %d provided %d arguments, but a minimum of 4 is required.", i+1, temp.Size()));
-                    Console.PrintF(string.Format("Ignoring group at line %d.", i+1));
+                    Console.PrintF("Group at line "..i + 1..." provided "..temp.Size().." arguments, but a minimum of 4 is required.");
+                    Console.PrintF("Ignoring group at line"..i + 1);
                 }
                 continue;
             }
@@ -333,13 +333,14 @@ class REItemHandler : StaticEventHandler {
             bool is_null = false;
             for (int a = 0; a < temp.Size(); a++) {
                 if (temp[a] == "") {
-                    Console.PrintF(string.Format("Group at line %d provided %d arguments, but argument %d is null.", i+1, temp.Size(), a+1));
-                    Console.PrintF(string.Format("Ignoring group at line %d.", i+1));
+                    Console.PrintF("Group at line "..i + 1..." provided "..temp.Size().." arguments, but argument "..a + 1..." is null.");
+                    Console.PrintF("Ignoring group at line "..i + 1);
                     is_null = true;
                     break;
                 }
             }
 
+            // Skip if an argument is null
             if (is_null) continue;
 
             let t = new("REItemThinker");
