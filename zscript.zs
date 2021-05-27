@@ -1,6 +1,6 @@
 version 4.5
 
-const REPKUP_MAXRNG = 6;
+const REPKUP_MAXRNG = 21;
 
 class REItemGlow : Actor {
     Actor master;
@@ -247,7 +247,8 @@ class REItemHandler : StaticEventHandler {
 
     // Because desyncs aren't fun
     int PseudoRNG(int min, int max) {
-        int rngtable[REPKUP_MAXRNG] = {1, 1, 2, 3, 5, 8};
+        // Yes, these are the digits of pi
+        int rngtable[REPKUP_MAXRNG] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6};
 
         int result = min + rngtable[GetRNGTic()];
         while (result > max) {
@@ -273,7 +274,7 @@ class REItemHandler : StaticEventHandler {
                 }
                 if (repkup_debug) {
                     if (info.useicon) console.printf("USE ICON");
-                    console.PrintF(string.Format("Found %s", T.GetClassName()));
+                    console.PrintF("Found"..T.GetClassName());
                 }
 
                 // Set variables
@@ -296,6 +297,7 @@ class REItemHandler : StaticEventHandler {
         return found;
     }
 
+    // Also known as the group parser
     override void WorldLoaded(WorldEvent e) {
         if (no_glows) return;
 
