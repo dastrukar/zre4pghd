@@ -13,7 +13,7 @@ OptionMenu "PKUPOptions" {
     Slider "Sprite Scale X", "repkup_scalex", 0.00, 1.00, 0.01, 2, "repkup_overridescale"
 
     StaticText " "
-    StaticText "-Console commands-", "blue"
+    StaticText "-Console commands-", "cyan"
     StaticText ":repkup_reload:", "yellow"
     StaticText "Reloads all glow effects and repkup_groups.txt.", "white" 
     StaticText "Enables the mod if disabled.", "white" 
@@ -23,7 +23,7 @@ OptionMenu "PKUPOptions" {
     StaticText "Removes all glows and thinkers. Disables the mod.", "white"
     StaticText " "
     StaticText " "
-    StaticText "-Glow sprite customization-", "blue"
+    StaticText "-Glow sprite customization-", "cyan"
     StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "white"
     StaticText "Refer to readme.md if you get lost.", "white"
 }
