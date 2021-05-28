@@ -137,6 +137,7 @@ class REItemGlow : Actor {
 
     Default {
         +Actor.NOBLOCKMAP
+        +Actor.NOINTERACTION
         +Actor.NOGRAVITY
         +Actor.FORCEYBILLBOARD
         -Actor.RANDOMIZE
