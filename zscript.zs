@@ -60,7 +60,7 @@ class REItemGlow : Actor {
 
             // Don't always do math stuff
             ticker++;
-            if (ticker == 16) {
+            if (ticker >= repkup_updatetic) {
                 TextureID id;
 
                 // What a thrill...
