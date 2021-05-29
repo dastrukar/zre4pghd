@@ -440,7 +440,7 @@ class REItemHandler : StaticEventHandler {
         // Why is this a thing???
         // Better safe than sorry, I guess.
         // Hopefully the player doesn't drop anything during the very first tic :]
-        if (level.maptime == 2 && !no_glows) {
+        if (level.maptime == 5 && !no_glows) {
             // No need for complex stuff, just do a quick reload ;]
             ReloadAllItemGlows();
         }
@@ -449,9 +449,7 @@ class REItemHandler : StaticEventHandler {
 
         if (temp_no_glows) {
             temp_no_glows = false;
-            Console.PrintF("Reloading repkup_groups.txt...");
             ReloadThinkers();
-            Console.PrintF("Reloading all glow effects...");
             ReloadAllItemGlows();
         }
 
@@ -461,7 +459,10 @@ class REItemHandler : StaticEventHandler {
             repkup_nosave &&
             (gameaction == ga_savegame || gameaction == ga_autosave)
         ) {
-            temp_no_glows = true;
+            // Don't reload twice
+            if (level.maptime > 5) {
+                temp_no_glows = true;
+            }
             ClearAll();
         }
     }
