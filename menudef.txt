@@ -47,11 +47,15 @@ OptionMenu "PKUPConsole" {
     Title "Other information"
 
     StaticText "-Console commands-", "cyan"
+    StaticText "Note: Console commands will affect players using the mod.", "red"
+    StaticText " "
     StaticText ":repkup_reload:", "yellow"
     StaticText "Reloads all glow effects and repkup_groups.txt.", "white" 
     StaticText "Enables the mod if disabled.", "white" 
     StaticText "(may cause lag)", "red"
+
     StaticText " "
+
     StaticText ":repkup_clear:", "yellow"
     StaticText "Removes all glows and thinkers in the current map.", "white"
     StaticText "Temporarily disables the mod.", "white"
