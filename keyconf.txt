@@ -1,2 +1,4 @@
 alias repkup_reload "netevent repkup_reload"
 alias repkup_clear "netevent repkup_clear"
+
+alias repkup_resetoptions "set repkup_alpha 0.50; set repkup_fadein 0.01; set repkup_scalex 1.00; set repkup_updatetic 16; set repkup_nosave true; set repkup_autoreload true; set repkup_overridescale false; set repkup_debug false;"
