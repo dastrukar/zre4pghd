@@ -20,6 +20,11 @@ OptionMenu "PKUPOptions" {
     StaticText "-Performance related options-", "cyan"
     StaticText "Determines how often the glow effects will do some math to rescale itself.", "white" 
     Slider "Automatic Scale per Tic", "repkup_updatetic", 0, 100, 1
+    StaticText " "
+    StaticText "If enabled, will delete all glows and thinkers when saving.","white"
+    StaticText "Which will provide a save without the mod enabled.", "white" 
+    StaticText "Does not work if the game is paused.", "red" 
+    Option "Don't save glows and thinkers", "repkup_nosave", "YN"
 
     StaticText " "
     StaticText "-Console commands-", "cyan"

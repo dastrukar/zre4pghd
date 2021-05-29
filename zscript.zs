@@ -170,6 +170,7 @@ class REItemThinker : Thinker {
 
 // Where the actors are assigned to each other
 class REItemHandler : StaticEventHandler {
+    bool temp_no_glows;
     bool no_glows;
     int timer;
     int rngtic;
@@ -194,7 +195,6 @@ class REItemHandler : StaticEventHandler {
         infos.Destroy();
 
         DeleteGlows();
-        no_glows = true;
     }
 
     void ReloadThinkers() {
@@ -300,7 +300,9 @@ class REItemHandler : StaticEventHandler {
 
     // Also known as the group parser
     override void WorldLoaded(WorldEvent e) {
-        if (no_glows) return;
+        if (no_glows) {
+            return;
+        }
 
         let infos = ThinkerIterator.Create("REItemThinker");
         let info = infos.Next();
@@ -413,6 +415,7 @@ class REItemHandler : StaticEventHandler {
         } else if (e.name ~== "repkup_clear") {
             if (timer > 0) {
                 ClearAll();
+                no_glows = true;
                 Console.PrintF("Pickup glows disabled. Use \"repkup_reload\" to enable pickup glows.");
                 timer = 0;
             } else {
@@ -435,5 +438,23 @@ class REItemHandler : StaticEventHandler {
         }
 
         if (timer > 0) timer--;
+
+        if (temp_no_glows) {
+            temp_no_glows = false;
+            Console.PrintF("Reloading repkup_groups.txt...");
+            ReloadThinkers();
+            Console.PrintF("Reloading all glow effects...");
+            ReloadAllItemGlows();
+        }
+
+        // Don't save glows and thinkers
+        if (
+            !no_glows &&
+            repkup_nosave &&
+            (gameaction == ga_savegame || gameaction == ga_autosave)
+        ) {
+            temp_no_glows = true;
+            ClearAll();
+        }
     }
 }
