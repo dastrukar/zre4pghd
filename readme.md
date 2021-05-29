@@ -7,7 +7,8 @@ This mod is mostly client-side, and should run fine in multiplayer with other pl
 This mod is intended to run with Hideous Destructor.\
 While it can technically run without it, it's not recommended.
 
-Should work on saves without the mod. *(just make sure to use `repkup_reload`)*
+Should work on saves without the mod.\
+*(just make sure to use `repkup_reload` or enable "Reload glows on loading a save")*
 
 Known issues:
 * After completing a map, the player's items *might* have their sprite appear in front of the glow, instead of being behind it. I still have no idea why this occurs. *(can be fixed by using "repkup_reload")*
