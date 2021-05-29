@@ -6,6 +6,13 @@ OptionValue "YN" {
 OptionMenu "PKUPOptions" {
     Title "Pickup Glow Options"
 
+    Submenu "Console commands", "PKUPConsole"
+    Submenu "Other information", "PKUPOther"
+
+
+    StaticText " "
+
+
     StaticText "-General options-", "cyan"
     Slider "Glow transparency alpha", "repkup_alpha", 0.00, 1.00, 0.05, 2
     Slider "Increment alpha per tic", "repkup_fadein", 0.00, 1.00, 0.01, 2
@@ -34,10 +41,10 @@ OptionMenu "PKUPOptions" {
 
     StaticText "If enabled, will automatically reload all glows when loading into a save.", "white"
     Option "Reload glows on loading a save", "repkup_autoreload", "YN"
+}
 
-
-    StaticText " "
-
+OptionMenu "PKUPConsole" {
+    Title "Other information"
 
     StaticText "-Console commands-", "cyan"
     StaticText ":repkup_reload:", "yellow"
@@ -46,9 +53,13 @@ OptionMenu "PKUPOptions" {
     StaticText "(may cause lag)", "red"
     StaticText " "
     StaticText ":repkup_clear:", "yellow"
-    StaticText "Removes all glows and thinkers. Disables the mod.", "white"
-    StaticText " "
-    StaticText " "
+    StaticText "Removes all glows and thinkers in the current map.", "white"
+    StaticText "Temporarily disables the mod.", "white"
+}
+
+OptionMenu "PKUPOther" {
+    Title "Other information"
+
     StaticText "-Glow sprite customization-", "cyan"
     StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "white"
     StaticText "Refer to readme.md if you get lost.", "white"
