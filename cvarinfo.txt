@@ -4,6 +4,7 @@ nosave float repkup_scalex=1.00;
 
 nosave int repkup_updatetic=16;
 nosave bool repkup_nosave=true;
+nosave bool repkup_autoreload=true;
 
 nosave bool repkup_overridescale=false;
 nosave bool repkup_debug=false;

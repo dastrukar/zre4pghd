@@ -172,6 +172,7 @@ class REItemThinker : Thinker {
 class REItemHandler : StaticEventHandler {
     bool temp_no_glows;
     bool no_glows;
+    bool not_save;
     int timer;
     int rngtic;
 
@@ -199,6 +200,7 @@ class REItemHandler : StaticEventHandler {
 
     void ReloadThinkers() {
         WorldEvent e;
+        not_save = true;
         WorldLoaded(e);
     }
 
@@ -380,6 +382,12 @@ class REItemHandler : StaticEventHandler {
             }
 
             let iter = ThinkerIterator.Create("REItemThinker");
+        }
+
+        if (not_save) {
+            not_save = false;
+        } else if (repkup_autoreload && e.IsSaveGame) {
+            ReloadAllItemGlows();
         }
     }
 
