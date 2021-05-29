@@ -32,7 +32,7 @@ OptionMenu "PKUPOptions" {
 
     StaticText " "
 
-    StaticText "If enabled, will delete all glows and thinkers when saving.","white"
+    StaticText "If enabled, will delete all glows when saving, and reload them after.", "white"
     StaticText "Which will provide a save without the mod enabled.", "white" 
     StaticText "Does not work if the game is paused with the command 'pause'.", "red" 
     Option "Don't save glows and thinkers", "repkup_nosave", "YN"
@@ -65,7 +65,7 @@ OptionMenu "PKUPConsole" {
     StaticText " "
 
     StaticText ":repkup_clear:", "yellow"
-    StaticText "Removes all glows and thinkers in the current map.", "white"
+    StaticText "Removes all glows in the current map.", "white"
     StaticText "Temporarily disables the mod.", "white"
 }
 
