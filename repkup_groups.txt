@@ -2,8 +2,8 @@ DERPBot,HERPBot,HDSpent7mm,UaS_EmptyMedikit,UaS_EmptyStimpack,UaS_EmptyZerkpack,
 
 HDBackpack,HHelmet,HDArmour:REPK:16,17,18,19:2
 
-HDRedKey:REPK:0,1,2,3:2:USECUSTOM:RKEYA0
-HDMap,HDRedSkull:REPK:0,1,2,3:2
+UaS_Automap:REPK:0,1,2,3:2:USECUSTOM:PMAPA0
+HDMap,HDRedSkull,HDRedKey:REPK:0,1,2,3:2
 
 UaS_Consumable:REPK:12,13,14,15:2:USEICON
 BrownSphere,BlueSphere,SpiritualArmour,PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_TraumaKit,UaS_2FCartridge:REPK:12,13,14,15:2
