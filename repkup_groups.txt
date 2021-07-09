@@ -8,6 +8,7 @@ HDMap,HDRedSkull,HDRedKey:REPK:0,1,2,3:2
 UaS_Consumable:REPK:12,13,14,15:2:USEICON
 BrownSphere,BlueSphere,SpiritualArmour,PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_TraumaKit,UaS_2FCartridge:REPK:12,13,14,15:2
 
+HDBastardRifle:REPK:8,9,10,11:2:USEICON
 HDWeapon:REPK:8,9,10,11:2
 
 HDUPK,HDAmmo,HDPickup:REPK:4,5,6,7:2

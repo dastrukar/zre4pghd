@@ -447,6 +447,7 @@ class REItemHandler : StaticEventHandler {
 
         if (timer > 0) timer--;
 
+        // Reload glows and thinkers after saving
         if (temp_no_glows) {
             temp_no_glows = false;
             ReloadThinkers();
