@@ -170,9 +170,10 @@ class REItemThinker : Thinker {
 
 // Where the actors are assigned to each other
 class REItemHandler : StaticEventHandler {
-    bool temp_no_glows;
+    bool save_no_glows;
     bool no_glows;
     bool not_save;
+    bool has_reloaded; // Used for starting reload
     int timer;
     int rngtic;
 
@@ -387,6 +388,7 @@ class REItemHandler : StaticEventHandler {
         if (not_save) {
             not_save = false;
         } else if (repkup_autoreload && e.IsSaveGame) {
+            has_reloaded = true;
             ReloadAllItemGlows();
         }
     }
@@ -408,6 +410,13 @@ class REItemHandler : StaticEventHandler {
         infos.Destroy();
     }
 
+    void DoReload() {
+        Console.PrintF("Reloading repkup_groups.txt...");
+        ReloadThinkers();
+        Console.PrintF("Reloading all glow effects...");
+        ReloadAllItemGlows();
+    }
+
     override void NetworkProcess(ConsoleEvent e) {
         // Commands are fun
         if (e.name ~== "repkup_reload") {
@@ -416,10 +425,7 @@ class REItemHandler : StaticEventHandler {
                 no_glows = false;
                 Console.PrintF("Pickup glows enabled. Use \"repkup_clear\" to disable pickup glows.");
             }
-            Console.PrintF("Reloading repkup_groups.txt...");
-            ReloadThinkers();
-            Console.PrintF("Reloading all glow effects...");
-            ReloadAllItemGlows();
+            DoReload();
         } else if (e.name ~== "repkup_clear") {
             if (timer > 0) {
                 ClearAll();
@@ -440,31 +446,38 @@ class REItemHandler : StaticEventHandler {
         // Why is this a thing???
         // Better safe than sorry, I guess.
         // Hopefully the player doesn't drop anything during the very first tic :]
-        if (level.maptime == 5 && !no_glows) {
+        if (
+            !no_glows &&
+            !has_reloaded &&
+            (
+                level.maptime == 10
+            ) || (
+                save_no_glows // Reload glows and thinkers after saving
+            )
+        ) {
             // No need for complex stuff, just do a quick reload ;]
-            ReloadAllItemGlows();
+            save_no_glows = false;
+            has_reloaded = true;
+            DoReload();
         }
 
         if (timer > 0) timer--;
 
-        // Reload glows and thinkers after saving
-        if (temp_no_glows) {
-            temp_no_glows = false;
-            ReloadThinkers();
-            ReloadAllItemGlows();
-        }
-
-        // Don't save glows and thinkers
+        // Don't save glows and thinkers (does not work if the game is paused)
         if (
             !no_glows &&
             repkup_nosave &&
+            !has_reloaded &&
             (gameaction == ga_savegame || gameaction == ga_autosave)
         ) {
-            // Don't reload twice
-            if (level.maptime > 5) {
-                temp_no_glows = true;
-            }
+            // Don't reload twice at the start (might still reload twice the first time)
+            save_no_glows = true;
+            Console.PrintF("Removing all glow effects...");
             ClearAll();
         }
+    }
+
+    override void WorldUnloaded(WorldEvent e) {
+        has_reloaded = false;
     }
 }
