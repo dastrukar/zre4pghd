@@ -5,6 +5,7 @@ const REPKUP_MAXRNG = 21;
 class REItemGlow : Actor {
 	Actor master;
 	TextureID custom;
+	int render_timer;
 	int ticker;
 	int tic;
 	int frametime;
@@ -34,6 +35,7 @@ class REItemGlow : Actor {
 		ticker = 0;
 		alpha  = 0;
 		frame  = 0;
+		render_timer = 0;
 	}
 
 	override void Tick() {
@@ -42,11 +44,18 @@ class REItemGlow : Actor {
 		if (master) {
 			// Hide if no sprite
 			if (
-				master.CurState.sprite == 0 &&
-				!(useicon && !Inventory(master).owner)
+				(
+					master.CurState.sprite == 0 &&
+					!(useicon && !Inventory(master).owner)
+				) ||
+				render_timer <= 0
 			) {
 				alpha = 0;
 				return;
+			}
+
+			if (render_timer > 0) {
+				render_timer--;
 			}
 
 			// Fade in
@@ -136,8 +145,6 @@ class REItemGlow : Actor {
 	}
 
 	Default {
-		+Actor.NOBLOCKMAP
-		+Actor.NOINTERACTION
 		+Actor.NOGRAVITY
 		+Actor.FORCEYBILLBOARD
 		-Actor.RANDOMIZE
@@ -474,6 +481,17 @@ class REItemHandler : StaticEventHandler {
 			save_no_glows = true;
 			Console.PrintF("Removing all glow effects...");
 			ClearAll();
+		}
+
+		// Render distance
+		if (repkup_userendist) {
+			BlockThingsIterator it = BlockThingsIterator.Create(players[consoleplayer].mo, repkup_renderdistance);
+			while (it.Next()) {
+				Console.PrintF(it.Thing.GetClassName());
+				if (it.Thing.GetClassName() == "REItemGlow") {
+					REItemGlow(it.Thing).render_timer = 10;
+				}
+			}
 		}
 	}
 
