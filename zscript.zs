@@ -44,13 +44,19 @@ class REItemGlow : Actor {
 		if (master) {
 			// Hide if no sprite
 			if (
-				(
-					master.CurState.sprite == 0 &&
-					!(useicon && !Inventory(master).owner)
-				) ||
-				render_timer <= 0
+				master.CurState.sprite == 0 &&
+				!(useicon && !Inventory(master).owner)
 			) {
 				alpha = 0;
+				return;
+			} else if (
+				repkup_userendist &&
+				render_timer <= 0
+			) {
+				// Fade out
+				if (alpha > 0) {
+					alpha -= repkup_fadeout;
+				}
 				return;
 			}
 
@@ -487,7 +493,6 @@ class REItemHandler : StaticEventHandler {
 		if (repkup_userendist) {
 			BlockThingsIterator it = BlockThingsIterator.Create(players[consoleplayer].mo, repkup_renderdistance);
 			while (it.Next()) {
-				Console.PrintF(it.Thing.GetClassName());
 				if (it.Thing.GetClassName() == "REItemGlow") {
 					REItemGlow(it.Thing).render_timer = 10;
 				}
