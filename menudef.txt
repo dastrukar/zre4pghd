@@ -16,6 +16,7 @@ OptionMenu "PKUPOptions" {
     StaticText "-General options-", "cyan"
     Slider "Glow transparency alpha", "repkup_alpha", 0.00, 1.00, 0.05, 2
     Slider "Increment alpha per tic", "repkup_fadein", 0.00, 1.00, 0.01, 2
+    Slider "Decrement alpha per tic", "repkup_fadeout", 0.00, 1.00, 0.01, 2
 
     StaticText " "
 
@@ -29,6 +30,12 @@ OptionMenu "PKUPOptions" {
     StaticText "-Performance related options-", "cyan"
     StaticText "Determines how often the glow effects will do some math to rescale itself.", "white" 
     Slider "Automatic Scale per Tic", "repkup_updatetic", 0, 100, 1
+
+    StaticText " "
+
+    StaticText "Determines how close you have to be in order for the glow effect to appear. (experimental)", "white" 
+    Option "Enable Render Distance Check", "repkup_userendist", "YN"
+    Slider "Render Distance", "repkup_renderdistance", 0, 5000, 2
 
     StaticText " "
 
