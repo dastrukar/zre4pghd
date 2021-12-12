@@ -331,7 +331,7 @@ class REItemHandler : StaticEventHandler {
 		array<string> contents; contents.Clear();
 
 		let lump = Wads.FindLump("repkup_groups");
-		Wads.ReadLump(lump).split(contents, "\n");
+		Wads.ReadLump(lump).replace("\r\n", "\n").split(contents, "\n");
 
 		for (int i = 0; i < contents.Size(); i++) {
 			array<string> temp; temp.Clear();
