@@ -40,7 +40,7 @@ OptionMenu "PKUPOptions" {
 
     StaticText " "
 
-    Option "Reload glows on loading a save", "repkup_autoreload", "YN"
+    Option "Reload glows on loading a save", "repkup_autoreload", "YesNo"
 
 
     StaticText " "
