@@ -1,8 +1,3 @@
-OptionValue "YN" {
-    0, "No"
-    1, "Yes"
-}
-
 OptionMenu "PKUPOptions" {
     Title "Pickup Glow Options"
 
@@ -13,40 +8,38 @@ OptionMenu "PKUPOptions" {
     StaticText " "
 
 
-    StaticText "-General options-", "cyan"
+    StaticText "= General options =", "Gold"
     Slider "Glow transparency alpha", "repkup_alpha", 0.00, 1.00, 0.05, 2
     Slider "Increment alpha per tic", "repkup_fadein", 0.00, 1.00, 0.01, 2
     Slider "Decrement alpha per tic", "repkup_fadeout", 0.00, 1.00, 0.01, 2
 
     StaticText " "
 
-    Option "Override Automatic Scale", "repkup_overridescale", "YN"
+    Option "Override Automatic Scale", "repkup_overridescale", "YesNo"
     Slider "Sprite Scale X", "repkup_scalex", 0.00, 1.00, 0.01, 2, "repkup_overridescale"
 
 
     StaticText " "
 
 
-    StaticText "-Performance related options-", "cyan"
-    StaticText "Determines how often the glow effects will do some math to rescale itself.", "white" 
+    StaticText "= Performance related options =", "Gold"
+    StaticText "Determines how often the glow effects will do some math to rescale itself.", "White"
     Slider "Automatic Scale per Tic", "repkup_updatetic", 0, 100, 1
 
     StaticText " "
 
-    StaticText "Determines how close you have to be in order for the glow effect to appear. (experimental)", "white" 
-    Option "Enable Render Distance Check", "repkup_userendist", "YN"
+    Option "Enable Render Distance Check", "repkup_userendist", "YesNo"
     Slider "Render Distance", "repkup_renderdistance", 0, 5000, 2
 
     StaticText " "
 
-    StaticText "If enabled, will delete all glows when saving, and reload them after.", "white"
-    StaticText "Which will provide a save without the mod enabled.", "white" 
-    StaticText "Does not work if the game is paused with the command 'pause'.", "red" 
-    Option "Don't save glows and thinkers", "repkup_nosave", "YN"
+    StaticText "If enabled, will delete all glows when saving, and reload them after.", "White"
+    StaticText "Which will provide a save without the mod enabled.", "White"
+    StaticText "Does not work if the game is paused with the command 'pause'.", "Red"
+    Option "Don't save glows and thinkers", "repkup_nosave", "YesNo"
 
     StaticText " "
 
-    StaticText "If enabled, will automatically reload all glows when loading into a save.", "white"
     Option "Reload glows on loading a save", "repkup_autoreload", "YN"
 
 
@@ -54,34 +47,34 @@ OptionMenu "PKUPOptions" {
     StaticText " "
 
 
-    StaticText "-Danger zone-", "red"
+    StaticText "= DANGER ZONE =", "Red"
     Command "Restore Default Settings", "repkup_resetoptions"
 }
 
 OptionMenu "PKUPConsole" {
     Title "Other information"
 
-    StaticText "-Console commands-", "cyan"
-    StaticText "Note: Console commands will affect players using the mod.", "red"
+    StaticText "= Console commands =", "Gold"
+    StaticText "Note: Console commands will affect players using the mod.", "Red"
     StaticText " "
-    StaticText ":repkup_reload:", "yellow"
-    StaticText "Reloads all glow effects and repkup_groups.txt.", "white" 
-    StaticText "Enables the mod if disabled.", "white" 
-    StaticText "(may cause lag)", "red"
+    StaticText "repkup_reload", "Green"
+    StaticText "Reloads all glow effects and repkup_groups.txt.", "White"
+    StaticText "Enables the mod if disabled.", "White"
+    StaticText "(may cause lag)", "Red"
 
     StaticText " "
 
-    StaticText ":repkup_clear:", "yellow"
-    StaticText "Removes all glows in the current map.", "white"
-    StaticText "Temporarily disables the mod.", "white"
+    StaticText "repkup_clear", "Green"
+    StaticText "Removes all glows in the current map.", "White"
+    StaticText "Temporarily disables the mod.", "White"
 }
 
 OptionMenu "PKUPOther" {
     Title "Other information"
 
-    StaticText "-Glow sprite customization-", "cyan"
-    StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "white"
-    StaticText "Refer to readme.md if you get lost.", "white"
+    StaticText "= Glow sprite customization =", "Gold"
+    StaticText "Sprite related stuff must be tweaked in repkup_groups.txt", "White"
+    StaticText "Refer to readme.md if you get lost.", "White"
 }
 
 AddOptionMenu "OptionsMenu" {
