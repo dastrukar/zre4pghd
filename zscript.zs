@@ -439,7 +439,13 @@ class REItemHandler : StaticEventHandler
 		if (_noGlows) return;
 
 		ParseGroups();
-		ReloadItemGlows();
+
+		// Auto reload on loading save
+		if (e.IsSaveGame)
+		{
+			_hasReloaded = true;
+			ReloadItemGlows();
+		}
 	}
 
 	override void WorldThingSpawned(WorldEvent e) {
