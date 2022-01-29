@@ -449,7 +449,7 @@ class REItemHandler : StaticEventHandler
 	}
 
 	override void WorldThingSpawned(WorldEvent e) {
-		if (_noGlows || Level.MapTime == 25) return;
+		if (_noGlows || !_hasReloaded) return;
 		let T = e.Thing;
 
 		let infos = ThinkerIterator.Create("REItemThinker");
@@ -499,7 +499,7 @@ class REItemHandler : StaticEventHandler
 			(
 				!_hasReloaded &&
 				!repkup_nosave && // Wait for autosave?
-				Level.MapTime == 25
+				Level.MapTime == 50
 			) || (
 				_reloadOnNextTick // Reload glows and thinkers after saving
 			)
