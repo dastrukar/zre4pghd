@@ -441,13 +441,15 @@ class REItemHandler : StaticEventHandler
 		}
 	}
 
-	override void WorldThingSpawned(WorldEvent e) {
+	override void WorldThingSpawned(WorldEvent e)
+	{
 		if (_noGlows) return;
 		let T = e.Thing;
 
 		let infos = ThinkerIterator.Create("REItemThinker");
 		let info = infos.Next();
-		while (info) {
+		while (info)
+		{
 			bool found = SummonGlow(REItemThinker(info), T);
 
 			// Don't keep looping after found
@@ -458,9 +460,11 @@ class REItemHandler : StaticEventHandler
 		infos.Destroy();
 	}
 
-	override void NetworkProcess(ConsoleEvent e) {
+	override void NetworkProcess(ConsoleEvent e)
+	{
 		// Commands are fun
-		if (e.Name ~== "repkup_reload") {
+		if (e.Name ~== "repkup_reload")
+		{
 			// Hope you don't mind the lag
 			if (_noGlows)
 			{
