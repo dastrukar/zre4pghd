@@ -13,7 +13,7 @@ class REItemGlow : Actor
 	bool UseCustom;
 	string TrueSprite;
 	string ClassName;
-	array<int> Frames;
+	Array<int> Frames;
 	static const string REPKUP_FRAMEINDEX[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 
 	private void Debugger()
@@ -189,8 +189,8 @@ class REUselessThingJustForLoadingSprites : Actor
 
 class REItemThinker : Thinker
 {
-	array<string> Classes;
-	array<int> Frames;
+	Array<string> Classes;
+	Array<int> Frames;
 	TextureID CustomTex;
 	string Sprite;
 	int FrameTime;
@@ -342,7 +342,7 @@ class REItemHandler : StaticEventHandler
 		ClearGroups();
 
 		// Get all the stuff
-		array<string> contents;
+		Array<string> contents;
 
 		let lump = Wads.FindLump("repkup_groups");
 		let lt = Wads.ReadLump(lump);
@@ -351,9 +351,9 @@ class REItemHandler : StaticEventHandler
 
 		for (int i = 0; i < contents.Size(); i++)
 		{
-			array<string> temp;
-			array<string> iTemp;
-			array<string> cTemp;
+			Array<string> temp;
+			Array<string> iTemp;
+			Array<string> cTemp;
 
 			contents[i].Split(temp, ":");
 			// Does it have enough arguments?
