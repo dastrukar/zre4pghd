@@ -22,7 +22,7 @@ class REItemGlow : Actor
 		bool temp;
 		Vector2 scl;
 		[texid, temp, scl] = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
-		let n = TexMan.GetName(texId);
+		string n = TexMan.GetName(texId);
 		Console.PrintF(string.format("%s %d %d", n, scl.x, scl.y));
 	}
 
@@ -266,7 +266,7 @@ class REItemHandler : StaticEventHandler
 			let info = infos.Next();
 			while (info)
 			{
-				let found = SummonGlow(REItemThinker(info), Actor(a));
+				bool found = SummonGlow(REItemThinker(info), Actor(a));
 
 				// Don't keep looping after found
 				if (found) break;
@@ -455,7 +455,7 @@ class REItemHandler : StaticEventHandler
 		let infos = ThinkerIterator.Create("REItemThinker");
 		let info = infos.Next();
 		while (info) {
-			let found = SummonGlow(REItemThinker(info), T);
+			bool found = SummonGlow(REItemThinker(info), T);
 
 			// Don't keep looping after found
 			if (found) break;
