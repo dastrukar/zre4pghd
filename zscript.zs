@@ -1,156 +1,174 @@
 version 4.5
 
-const REPKUP_MAXRNG = 21;
-
-class REItemGlow : Actor {
-	Actor master;
-	TextureID custom;
-	int render_timer;
-	int ticker;
-	int tic;
-	int frametime;
-	int spriteindex;
-	bool useicon;
-	bool usecustom;
-	string truesprite;
-	string classname;
-	float actualalpha;
-	array<int> frames;
+class REItemGlow : Actor
+{
+	Actor Master;
+	TextureID CustomTex;
+	int RenderTimer;
+	int Ticker;
+	int FrameTic;
+	int FrameTime;
+	int SpriteIndex;
+	bool UseIcon;
+	bool UseCustom;
+	string TrueSprite;
+	string ClassName;
+	array<int> Frames;
 	static const string REPKUP_FRAMEINDEX[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 
-	void Debugger() {
-		TextureID texid;
+	private void Debugger()
+	{
+		TextureID texId;
 		bool temp;
 		Vector2 scl;
-		[texid, temp, scl] = master.CurState.NextState.GetSpriteTexture(master.SpriteRotation);
-		let n = TexMan.GetName(texid);
+		[texid, temp, scl] = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
+		let n = TexMan.GetName(texId);
 		Console.PrintF(string.format("%s %d %d", n, scl.x, scl.y));
 	}
 
-	bool CheckIfTNT(State base) {
-		return (TexMan.GetName(base.GetSpriteTexture(master.SpriteRotation)) != "TNT1A0");
+	private bool CheckIfTNT(State base)
+	{
+		return (TexMan.GetName(base.GetSpriteTexture(Master.SpriteRotation)) != "TNT1A0");
 	}
 
-	override void BeginPlay() {
-		ticker = 0;
-		alpha  = 0;
-		frame  = 0;
-		render_timer = 0;
+	override void BeginPlay()
+	{
+		Ticker = 0;
+		Alpha = 0;
+		Frame = 0;
+		RenderTimer = 0;
 	}
 
-	override void Tick() {
+	override void Tick()
+	{
 		Super.Tick();
 
-		if (master) {
+		if (Master)
+		{
 			// Hide if no sprite
 			if (
-				master.CurState.sprite == 0 &&
-				!(useicon && !Inventory(master).owner)
-			) {
+				Master.CurState.Sprite == 0 &&
+				!(UseIcon && !Inventory(Master).owner)
+			)
+			{
 				alpha = 0;
 				return;
 			} else if (
 				repkup_userendist &&
-				render_timer <= 0
-			) {
+				RenderTimer <= 0
+			)
+			{
 				// Fade out
-				if (alpha > 0) {
-					alpha -= repkup_fadeout;
-				}
+				if (alpha > 0) alpha -= repkup_fadeout;
 				return;
 			}
 
-			if (render_timer > 0) {
-				render_timer--;
-			}
+			if (RenderTimer > 0) RenderTimer--;
 
 			// Fade in
-			if (alpha < repkup_alpha) {
-				alpha += repkup_fadein;
-			}
+			if (alpha < repkup_alpha) alpha += repkup_fadein;
+
 			// Just in case
-			if (alpha >= repkup_alpha) {
-				alpha = repkup_alpha;
-			}
+			if (alpha >= repkup_alpha) alpha = repkup_alpha;
 
 			// Don't always do math stuff
-			ticker++;
-			if (ticker >= repkup_updatetic) {
+			Ticker++;
+			if (Ticker >= repkup_updatetic)
+			{
 				TextureID id;
 
 				// What a thrill...
-				if (usecustom) {
-					id = custom;
-				} else if (useicon && Inventory(master).icon) {
-					id = Inventory(master).icon;
-				} else if (
-					master.ResolveState("spawn") &&
-					CheckIfTNT(master.ResolveState("spawn"))
-				) {
-					id = master.ResolveState("spawn").GetSpriteTexture(master.SpriteRotation);
-				} else if (
-					master.CurState &&
-					CheckIfTNT(master.CurState)
-				) {
-					id = master.CurState.NextState.GetSpriteTexture(master.SpriteRotation);
-				} else if (
-					master.CurState.NextState &&
-					CheckIfTNT(master.CurState.NextState)
-				) {
-					id = master.CurState.NextState.GetSpriteTexture(master.SpriteRotation);
-				} else {
+				if (UseCustom)
+				{
+					id = CustomTex;
+				}
+				else if (UseIcon && Inventory(Master).icon)
+				{
+					id = Inventory(Master).icon;
+				}
+				else if (
+					Master.ResolveState("spawn") &&
+					CheckIfTNT(Master.ResolveState("spawn"))
+				)
+				{
+					id = Master.ResolveState("spawn").GetSpriteTexture(Master.SpriteRotation);
+				}
+				else if (
+					Master.CurState &&
+					CheckIfTNT(Master.CurState)
+				)
+				{
+					id = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
+				}
+				else if (
+					Master.CurState.NextState &&
+					CheckIfTNT(Master.CurState.NextState)
+				)
+				{
+					id = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
+				}
+				else
+				{
 					// fuck it
-					scale  = (1, 1);
+					scale = (1, 1);
 				}
 
 				if (id) AdjustSprite(id);
-				ticker = 0;
+				Ticker = 0;
 			}
 			// Make sure halo thing is on the item
-			if (master.pos != pos) {
-				SetOrigin(master.pos, true);
+			if (Master.pos != pos)
+			{
+				SetOrigin(Master.pos, true);
 			}
-		} else {
-			if (repkup_debug) Console.PrintF(string.Format("Bye, %s!", classname));
+		}
+		else
+		{
+			if (repkup_debug) Console.PrintF(string.Format("Bye, %s!", ClassName));
 			Destroy();
 		}
 	}
 
-	void ResetTic() {
+	private void ResetTic()
+	{
 		// please stop aborting vm thanks
-		if (tic == frames.Size()) {
-			tic = 0;
-		}
+		if (FrameTic == Frames.Size()) FrameTic = 0;
 	}
 
-	void AdjustSprite(TextureID texid) {
-		let size	= TexMan.GetScaledSize(texid);
-		let offset	= TexMan.GetScaledOffset(texid);
-		let m_scale = master.scale;
-		if (repkup_overridescale) {
+	private void AdjustSprite(TextureID texid)
+	{
+		Vector2 size = TexMan.GetScaledSize(texid);
+		Vector2 offset = TexMan.GetScaledOffset(texid);
+		Vector2 mScale = Master.Scale;
+		if (repkup_overridescale)
+		{
 			scale = (repkup_scalex, 1);
-		} else {
-			ResetTic();
-			let sprite_name = string.Format("%s%s0", truesprite, REPKUP_FRAMEINDEX[frames[tic]]);
-			let s = TexMan.GetScaledSize(TexMan.CheckForTexture(sprite_name));
-			let sc = (size.x / s.x * m_scale.x);
-			scale = (sc+0.05, 1);
 		}
-		SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * m_scale.x, 0);
+		else
+		{
+			ResetTic();
+			string spriteName = string.Format("%s%s0", TrueSprite, REPKUP_FRAMEINDEX[Frames[FrameTic]]);
+			Vector2 s = TexMan.GetScaledSize(TexMan.CheckForTexture(spriteName));
+			float sc = (size.x / s.x * mScale.x);
+			scale = (sc + 0.05, 1);
+		}
+		SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * mScale.x, 0);
 	}
 
 	// Should be called every tick
-	action void A_DoAnimate() {
+	private action void A_DoAnimate()
+	{
 		// not taking any chances here
 		invoker.ResetTic();
-		invoker.sprite = invoker.spriteindex;
-		invoker.frame = invoker.frames[invoker.tic];
-		invoker.A_SetTics(invoker.frametime);
-		invoker.tic++;
+		invoker.Sprite = invoker.SpriteIndex;
+		invoker.Frame = invoker.Frames[invoker.FrameTic];
+		invoker.A_SetTics(invoker.FrameTime);
+		invoker.FrameTic++;
 		invoker.ResetTic();
 	}
 
-	Default {
+	Default
+	{
 		+Actor.NOGRAVITY
 		+Actor.FORCEYBILLBOARD
 		-Actor.RANDOMIZE
@@ -158,71 +176,76 @@ class REItemGlow : Actor {
 		RenderStyle "Translucent";
 	}
 
-	States {
+	States
+	{
 		Spawn:
 			TNT1 A 1 A_DoAnimate();
 			loop;
 	}
 }
 
-class REUselessThingJustForLoadingSprites : Actor {
-	States {
-		Spawn: REPK A 0; stop;// i have to use REPKA0 here, because sprites won't load in, unless you use them
+class REUselessThingJustForLoadingSprites : Actor
+{
+	States
+	{
+		Spawn:
+			REPK A 0;
+			Stop;// i have to use REPKA0 here, because sprites won't load in, unless you use them
 	}
 }
 
-class REItemThinker : Thinker {
-	array<string> classes;
-	array<int> frames;
-	TextureID custom;
-	string sprite;
-	int frametime;
-	bool useicon;
-	bool usecustom;
+class REItemThinker : Thinker
+{
+	array<string> Classes;
+	array<int> Frames;
+	TextureID CustomTex;
+	string Sprite;
+	int FrameTime;
+	bool UseIcon;
+	bool UseCustom;
 }
 
+const REPKUP_MAXRNG = 21;
+
 // Where the actors are assigned to each other
-class REItemHandler : StaticEventHandler {
-	bool save_no_glows;
-	bool no_glows;
-	bool not_save;
-	bool has_reloaded; // Used for starting reload
-	int timer;
-	int rngtic;
+class REItemHandler : StaticEventHandler
+{
+	private bool _reloadOnNextTick;
+	private bool _noGlows;
+	private bool _hasReloaded; // Used for starting reload
+	private int _rngTic;
+	static const int RNGTABLE[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6};
 
 	// Checks if the class exists
-	bool CheckClass(string s) {
+	private bool CheckClass(string s)
+	{
 		class a;
 		a = s;
 		return (a);
 	}
 
 	// Say goodbye to all your glows :[
-	void ClearAll() {
+	private void ClearGroups()
+	{
 		// Remove all info thinkers
 		let infos = ThinkerIterator.Create("REItemThinker");
 		let info = infos.Next();
-		while (info) {
+		while (info)
+		{
 			info.Destroy();
 			info = infos.Next();
 		}
 
 		infos.Destroy();
-
-		DeleteGlows();
-	}
-
-	void ReloadThinkers() {
-		WorldEvent e;
-		not_save = true;
-		WorldLoaded(e);
 	}
 
 	// Remove all glows
-	void DeleteGlows() {
+	private void DeleteGlows()
+	{
 		let glows = ThinkerIterator.Create("REItemGlow");
 		let glow = glows.Next();
-		while (glow) {
+		while (glow)
+		{
 			glow.Destroy();
 			glow = glows.Next();
 		}
@@ -230,15 +253,19 @@ class REItemHandler : StaticEventHandler {
 		glows.Destroy();
 	}
 
-	void ReloadAllItemGlows() {
+	private void ReloadItemGlows()
+	{
+		Console.PrintF("Reloading all glow effects...");
 		DeleteGlows();
 
 		let actors = ThinkerIterator.Create("Actor");
 		let a = actors.Next();
-		while (a) {
+		while (a)
+		{
 			let infos = ThinkerIterator.Create("REItemThinker");
 			let info = infos.Next();
-			while (info) {
+			while (info)
+			{
 				let found = SummonGlow(REItemThinker(info), Actor(a));
 
 				// Don't keep looping after found
@@ -253,59 +280,61 @@ class REItemHandler : StaticEventHandler {
 		actors.Destroy();
 	}
 
-	int GetRNGTic() {
-		rngtic++;
+	private int GetRNGTic()
+	{
+		_rngTic++;
 		// Don't overflow
-		if (rngtic >= REPKUP_MAXRNG) {
-			rngtic = 0;
-		}
-		return rngtic;
+		if (_rngTic >= REPKUP_MAXRNG) _rngTic = 0;
+		return _rngTic;
 	}
 
 	// Because desyncs aren't fun
-	int PseudoRNG(int min, int max) {
+	private int PseudoRNG(int min, int max)
+	{
 		// Yes, these are the digits of pi
-		int rngtable[REPKUP_MAXRNG] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6};
+		int result = min + RNGTABLE[GetRNGTic()];
+		while (result > max)
+		{
+			result -= RNGTABLE[GetRNGTic()];
 
-		int result = min + rngtable[GetRNGTic()];
-		while (result > max) {
-			result -= rngtable[GetRNGTic()];
-
-			if (result < min) {
-				return min;
-			}
+			if (result < min) return min;
 		}
 		return result;
 	}
 
 	// Returns true if successfully summoned
-	bool SummonGlow(REItemThinker info, Actor T) {
+	private bool SummonGlow(REItemThinker info, Actor T)
+	{
 		bool found = false;
-		for (int i = 0; i < info.classes.Size(); i++) {
-			if (T is info.classes[i]) {
+		for (int i = 0; i < info.Classes.Size(); i++)
+		{
+			if (T is info.Classes[i])
+			{
 				// Is this a blacklisted item?
-				if (info.sprite == "TNT1") {
+				if (info.Sprite == "TNT1")
+				{
 					// Don't spawn anything
 					found = true;
 					break;
 				}
-				if (repkup_debug) {
-					if (info.useicon) console.printf("USE ICON");
-					console.PrintF("Found"..T.GetClassName());
+				if (repkup_debug)
+				{
+					if (info.UseIcon) Console.PrintF("USE ICON");
+					Console.PrintF("Found"..T.GetClassName());
 				}
 
 				// Set variables
 				let glow = REItemGlow(Actor.Spawn("REItemGlow", T.pos));
-				glow.master = T;
-				glow.truesprite  = info.sprite;
-				glow.spriteindex = Actor.GetSpriteIndex(info.sprite);
-				glow.classname	 = T.GetClassName();
-				glow.frames.Copy(info.frames);
-				glow.frametime = info.frametime;
-				glow.useicon   = info.useicon;
-				glow.usecustom = info.usecustom;
-				glow.custom    = info.custom;
-				glow.tic	   = PseudoRNG(0, info.frametime); //Random(0, info.frametime);
+				glow.Master = T;
+				glow.TrueSprite = info.Sprite;
+				glow.SpriteIndex = Actor.GetSpriteIndex(info.Sprite);
+				glow.ClassName = T.GetClassName();
+				glow.Frames.Copy(info.Frames);
+				glow.FrameTime = info.FrameTime;
+				glow.UseIcon = info.UseIcon;
+				glow.UseCustom = info.UseCustom;
+				glow.CustomTex = info.CustomTex;
+				glow.FrameTic = PseudoRNG(0, info.FrameTime);
 				found = true;
 				break;
 			}
@@ -314,36 +343,31 @@ class REItemHandler : StaticEventHandler {
 		return found;
 	}
 
-	// Also known as the group parser
-	override void WorldLoaded(WorldEvent e) {
-		if (no_glows) {
-			return;
-		}
-
-		let infos = ThinkerIterator.Create("REItemThinker");
-		let info = infos.Next();
-		while (info) {
-			info.Destroy();
-			info = infos.Next();
-		}
+	private void ParseGroups()
+	{
+		Console.PrintF("Reloading repkup_groups.txt...");
+		ClearGroups();
 
 		// Get all the stuff
-		array<string> contents; contents.Clear();
+		array<string> contents;
 
 		let lump = Wads.FindLump("repkup_groups");
 		let lt = Wads.ReadLump(lump);
 		lt.replace("\r\n", "\n");
 		lt.split(contents, "\n");
 
-		for (int i = 0; i < contents.Size(); i++) {
-			array<string> temp; temp.Clear();
-			array<string> i_temp; i_temp.Clear();
-			array<string> c_temp; c_temp.Clear();
+		for (int i = 0; i < contents.Size(); i++)
+		{
+			array<string> temp;
+			array<string> iTemp;
+			array<string> cTemp;
 
 			contents[i].Split(temp, ":");
 			// Does it have enough arguments?
-			if (temp.Size() < 4) {
-				if (temp.Size() != 0 && i != (contents.Size() - 1)) {
+			if (temp.Size() < 4)
+			{
+				if (temp.Size() != 0 && i != (contents.Size() - 1))
+				{
 					Console.PrintF("Group at line "..i + 1..." provided "..temp.Size().." arguments, but a minimum of 4 is required.");
 					Console.PrintF("Ignoring group at line"..i + 1);
 				}
@@ -351,65 +375,81 @@ class REItemHandler : StaticEventHandler {
 			}
 
 			// Just in case
-			bool is_null = false;
-			for (int a = 0; a < temp.Size(); a++) {
-				if (temp[a] == "") {
+			bool isNull = false;
+			for (int a = 0; a < temp.Size(); a++)
+			{
+				if (temp[a] == "")
+				{
 					Console.PrintF("Group at line "..i + 1..." provided "..temp.Size().." arguments, but argument "..a + 1..." is null.");
 					Console.PrintF("Ignoring group at line "..i + 1);
-					is_null = true;
+					isNull = true;
 					break;
 				}
 			}
 
 			// Skip if an argument is null
-			if (is_null) continue;
+			if (isNull) continue;
 
 			let t = new("REItemThinker");
-			temp[0].Split(c_temp, ",");
-			t.sprite = temp[1];
-			temp[2].Split(i_temp, ",");
-			t.frametime = temp[3].ToInt(10);
+			temp[0].Split(cTemp, ",");
+			t.Sprite = temp[1];
+			temp[2].Split(iTemp, ",");
+			t.FrameTime = temp[3].ToInt(10);
 
-			if (temp.Size() > 4) {
+			if (temp.Size() > 4)
+			{
 				let flag = temp[4];
-				if (flag == "USEICON") {
-					t.useicon = true;
-				} else if (flag == "USECUSTOM") {
-					if (temp.Size() > 5) {
-						t.usecustom = true;
-						t.custom = TexMan.CheckForTexture(temp[5]);
-					} else {
-						Console.PrintF(string.Format("Group at line %d used flag \"usecustom\", but didn't provide an argument afterwards.\nIgnoring flag.", i+1));
+				if (flag == "USEICON")
+				{
+					t.UseIcon = true;
+				}
+				else if (flag == "USECUSTOM")
+				{
+					if (temp.Size() > 5)
+					{
+						t.UseCustom = true;
+						t.CustomTex = TexMan.CheckForTexture(temp[5]);
 					}
-				} else {
-					Console.PrintF(string.Format("Group at line %d used an invalid flag.\nIgnoring flag.", i+1));
+					else
+					{
+						Console.PrintF(string.Format("Group at line %d used flag \"USECUSTOM\", but didn't provide an argument afterwards.\nIgnoring flag.", i + 1));
+					}
+				}
+				else
+				{
+					Console.PrintF(string.Format("Group at line %d used an invalid flag.\nIgnoring flag.", i + 1));
 				}
 			}
 
 			// If there's an invalid class, just remove it
-			for (int i = 0; i < c_temp.Size(); i++) {
-				if (CheckClass(c_temp[i])) {
-					t.classes.Push(c_temp[i]);
-				}
+			for (int i = 0; i < cTemp.Size(); i++)
+			{
+				if (CheckClass(cTemp[i])) t.Classes.Push(cTemp[i]);
 			}
 
-			for (int i = 0; i < i_temp.Size(); i++) {
-				t.frames.Push(i_temp[i].ToInt(10));
+			for (int i = 0; i < iTemp.Size(); i++)
+			{
+				t.Frames.Push(iTemp[i].ToInt(10));
 			}
-
-			let iter = ThinkerIterator.Create("REItemThinker");
 		}
+	}
 
-		if (not_save) {
-			not_save = false;
-		} else if (repkup_autoreload && e.IsSaveGame) {
-			has_reloaded = true;
-			ReloadAllItemGlows();
+	override void WorldLoaded(WorldEvent e)
+	{
+		if (_noGlows) return;
+
+		ParseGroups();
+
+		// Auto reload on loading save
+		if (repkup_autoreload && e.IsSaveGame)
+		{
+			_hasReloaded = true;
+			ReloadItemGlows();
 		}
 	}
 
 	override void WorldThingSpawned(WorldEvent e) {
-		if (no_glows || level.maptime < 2) return;
+		if (_noGlows || Level.MapTime == 25) return;
 		let T = e.Thing;
 
 		let infos = ThinkerIterator.Create("REItemThinker");
@@ -425,84 +465,84 @@ class REItemHandler : StaticEventHandler {
 		infos.Destroy();
 	}
 
-	void DoReload() {
-		Console.PrintF("Reloading repkup_groups.txt...");
-		ReloadThinkers();
-		Console.PrintF("Reloading all glow effects...");
-		ReloadAllItemGlows();
-	}
-
 	override void NetworkProcess(ConsoleEvent e) {
 		// Commands are fun
-		if (e.name ~== "repkup_reload") {
+		if (e.Name ~== "repkup_reload") {
 			// Hope you don't mind the lag
-			if (no_glows) {
-				no_glows = false;
+			if (_noGlows)
+			{
+				_noGlows = false;
 				Console.PrintF("Pickup glows enabled. Use \"repkup_clear\" to disable pickup glows.");
 			}
-			DoReload();
-		} else if (e.name ~== "repkup_clear") {
-			if (timer > 0) {
-				ClearAll();
-				no_glows = true;
-				Console.PrintF("Pickup glows disabled. Use \"repkup_reload\" to enable pickup glows.");
-				timer = 0;
-			} else {
-				Console.PrintF("You're about to disable all pickup glows.");
-				Console.PrintF("Please re-enter \"repkup_clear\" again in 30 seconds to confirm that you actually want to do this.");
-				timer = 1050;
-			}
+
+			ParseGroups();
+			ReloadItemGlows();
+		}
+		else if (e.Name ~== "repkup_clear")
+		{
+			ClearGroups();
+			DeleteGlows();
+			_noGlows = true;
+			Console.PrintF("Pickup glows temporarily disabled. Use \"repkup_reload\" to enable pickup glows.");
 		}
 	}
 
-	override void WorldTick() {
+	override void WorldTick()
+	{
 		// Player's inventory doesn't initialize immediately, curse you inventory system.
-		// Also, I have no idea why, but if I summoned the glows when maptime = 0, the pistol will overlay the glow.
+		// Also, I have no idea why, but if I summoned the glows when maptime = 0, some items will overlay the glow.
 		// Why is this a thing???
 		// Better safe than sorry, I guess.
 		// Hopefully the player doesn't drop anything during the very first tic :]
 		if (
-			!no_glows &&
-			!has_reloaded &&
+			!_noGlows &&
+			!_hasReloaded &&
 			(
-				level.maptime == 10
+				Level.MapTime == 25
 			) || (
-				save_no_glows // Reload glows and thinkers after saving
+				_reloadOnNextTick // Reload glows and thinkers after saving
 			)
-		) {
+		)
+		{
 			// No need for complex stuff, just do a quick reload ;]
-			save_no_glows = false;
-			has_reloaded = true;
-			DoReload();
+			_reloadOnNextTick = false;
+			_hasReloaded = true;
+			ParseGroups();
+			ReloadItemGlows();
 		}
-
-		if (timer > 0) timer--;
 
 		// Don't save glows and thinkers (does not work if the game is paused)
 		if (
-			!no_glows &&
+			!_noGlows &&
 			repkup_nosave &&
-			!has_reloaded &&
 			(gameaction == ga_savegame || gameaction == ga_autosave)
-		) {
+		)
+		{
 			// Don't reload twice at the start (might still reload twice the first time)
-			save_no_glows = true;
+			_reloadOnNextTick = true;
+			_hasReloaded = false;
+
 			Console.PrintF("Removing all glow effects...");
-			ClearAll();
+			ClearGroups();
+			DeleteGlows();
 		}
 
 		// Render distance
-		if (repkup_userendist) {
-			BlockThingsIterator it = BlockThingsIterator.Create(players[consoleplayer].mo, repkup_renderdistance);
-			while (it.Next()) {
-				if (it.Thing.GetClassName() == "REItemGlow") {
-					REItemGlow(it.Thing).render_timer = 10;
+		if (repkup_userendist)
+		{
+			BlockThingsIterator it = BlockThingsIterator.Create(players[ConsolePlayer].mo, repkup_renderdistance);
+			while (it.Next())
+			{
+				if (it.Thing.GetClassName() == "REItemGlow")
+				{
+					REItemGlow(it.Thing).RenderTimer = 10;
 				}
 			}
 		}
 	}
 
-	override void WorldUnloaded(WorldEvent e) {
-		has_reloaded = false;
+	override void WorldUnloaded(WorldEvent e)
+	{
+		_hasReloaded = false;
 	}
 }
