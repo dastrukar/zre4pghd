@@ -439,13 +439,7 @@ class REItemHandler : StaticEventHandler
 		if (_noGlows) return;
 
 		ParseGroups();
-
-		// Auto reload on loading save
-		if (repkup_autoreload && e.IsSaveGame)
-		{
-			_hasReloaded = true;
-			ReloadItemGlows();
-		}
+		ReloadItemGlows();
 	}
 
 	override void WorldThingSpawned(WorldEvent e) {
@@ -496,8 +490,9 @@ class REItemHandler : StaticEventHandler
 		// Hopefully the player doesn't drop anything during the very first tic :]
 		if (
 			!_noGlows &&
-			!_hasReloaded &&
 			(
+				!_hasReloaded &&
+				!repkup_nosave && // Wait for autosave?
 				Level.MapTime == 25
 			) || (
 				_reloadOnNextTick // Reload glows and thinkers after saving
@@ -520,7 +515,6 @@ class REItemHandler : StaticEventHandler
 		{
 			// Don't reload twice at the start (might still reload twice the first time)
 			_reloadOnNextTick = true;
-			_hasReloaded = false;
 
 			Console.PrintF("Removing all glow effects...");
 			ClearGroups();
