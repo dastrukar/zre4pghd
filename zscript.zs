@@ -53,7 +53,8 @@ class REItemGlow : Actor
 			{
 				alpha = 0;
 				return;
-			} else if (
+			}
+			else if (
 				repkup_userendist &&
 				RenderTimer <= 0
 			)
@@ -107,13 +108,10 @@ class REItemGlow : Actor
 				{
 					id = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
 				}
-				else
-				{
-					// fuck it
-					scale = (1, 1);
-				}
 
 				if (id) AdjustSprite(id);
+				if (repkup_overridescale) scale = (repkup_scalex, 1);
+
 				Ticker = 0;
 			}
 			// Make sure halo thing is on the item
@@ -140,18 +138,13 @@ class REItemGlow : Actor
 		Vector2 size = TexMan.GetScaledSize(texid);
 		Vector2 offset = TexMan.GetScaledOffset(texid);
 		Vector2 mScale = Master.Scale;
-		if (repkup_overridescale)
-		{
-			scale = (repkup_scalex, 1);
-		}
-		else
-		{
-			ResetTic();
-			string spriteName = string.Format("%s%s0", TrueSprite, REPKUP_FRAMEINDEX[Frames[FrameTic]]);
-			Vector2 s = TexMan.GetScaledSize(TexMan.CheckForTexture(spriteName));
-			float sc = (size.x / s.x * mScale.x);
-			scale = (sc + 0.05, 1);
-		}
+
+		ResetTic();
+		string spriteName = string.Format("%s%s0", TrueSprite, REPKUP_FRAMEINDEX[Frames[FrameTic]]);
+		Vector2 s = TexMan.GetScaledSize(TexMan.CheckForTexture(spriteName));
+		float sc = (size.x / s.x * mScale.x);
+		scale = (sc + 0.05, 1);
+
 		SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * mScale.x, 0);
 	}
 
@@ -449,7 +442,7 @@ class REItemHandler : StaticEventHandler
 	}
 
 	override void WorldThingSpawned(WorldEvent e) {
-		if (_noGlows || !_hasReloaded) return;
+		if (_noGlows) return;
 		let T = e.Thing;
 
 		let infos = ThinkerIterator.Create("REItemThinker");
