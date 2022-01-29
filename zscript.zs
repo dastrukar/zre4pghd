@@ -110,7 +110,7 @@ class REItemGlow : Actor
 				}
 
 				if (id) AdjustSprite(id);
-				if (repkup_overridescale) scale = (repkup_scalex, 1);
+				if (repkup_overridescale) Scale = (repkup_scalex, 1);
 
 				Ticker = 0;
 			}
@@ -143,7 +143,7 @@ class REItemGlow : Actor
 		string spriteName = string.Format("%s%s0", TrueSprite, REPKUP_FRAMEINDEX[Frames[FrameTic]]);
 		Vector2 s = TexMan.GetScaledSize(TexMan.CheckForTexture(spriteName));
 		float sc = (size.x / s.x * mScale.x);
-		scale = (sc + 0.05, 1);
+		Scale = (sc + 0.05, 1);
 
 		SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * mScale.x, 0);
 	}
