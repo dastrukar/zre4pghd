@@ -35,12 +35,11 @@ OptionMenu "PKUPOptions" {
 
     StaticText "If enabled, will delete all glows when saving, and reload them after.", "White"
     StaticText "Which will provide a save without the mod enabled.", "White"
-    StaticText "Does not work if the game is paused with the command 'pause'.", "Red"
+    StaticText "Does not work if the game is paused.", "Red"
     Option "Don't save glows and thinkers", "repkup_nosave", "YesNo"
 
+
     StaticText " "
-
-
     StaticText " "
     StaticText " "
 
@@ -54,7 +53,9 @@ OptionMenu "PKUPConsole" {
 
     StaticText "= Console commands =", "Gold"
     StaticText "Note: Console commands will affect players using the mod.", "Red"
+
     StaticText " "
+
     StaticText "repkup_reload", "Green"
     StaticText "Reloads all glow effects and repkup_groups.txt.", "White"
     StaticText "Enables the mod if disabled.", "White"

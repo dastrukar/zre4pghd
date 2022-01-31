@@ -37,6 +37,7 @@ class REItemGlow : Actor
 		Alpha = 0;
 		Frame = 0;
 		RenderTimer = 0;
+		Scale = (0, 0);
 	}
 
 	override void Tick()
@@ -45,13 +46,19 @@ class REItemGlow : Actor
 
 		if (Master)
 		{
+			// Make sure halo thing is on the item
+			if (Master.pos != pos)
+			{
+				SetOrigin(Master.pos, true);
+			}
+
 			// Hide if no sprite
 			if (
 				Master.CurState.Sprite == 0 &&
-				!(UseIcon && !Inventory(Master).owner)
+				!(UseIcon && Inventory(Master) && !Inventory(Master).Owner)
 			)
 			{
-				alpha = 0;
+				Alpha = 0;
 				return;
 			}
 			else if (
@@ -60,17 +67,14 @@ class REItemGlow : Actor
 			)
 			{
 				// Fade out
-				if (alpha > 0) alpha -= repkup_fadeout;
+				if (Alpha > 0) Alpha = Max(0, Alpha - repkup_fadeout);
 				return;
 			}
 
 			if (RenderTimer > 0) RenderTimer--;
 
 			// Fade in
-			if (alpha < repkup_alpha) alpha += repkup_fadein;
-
-			// Just in case
-			if (alpha >= repkup_alpha) alpha = repkup_alpha;
+			if (Alpha < repkup_alpha) Alpha = Min(Alpha + repkup_fadein, repkup_alpha);
 
 			// Don't always do math stuff
 			Ticker++;
@@ -99,25 +103,15 @@ class REItemGlow : Actor
 					CheckIfTNT(Master.CurState)
 				)
 				{
-					id = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
-				}
-				else if (
-					Master.CurState.NextState &&
-					CheckIfTNT(Master.CurState.NextState)
-				)
-				{
-					id = Master.CurState.NextState.GetSpriteTexture(Master.SpriteRotation);
+					id = Master.CurState.GetSpriteTexture(Master.SpriteRotation);
 				}
 
 				if (id) AdjustSprite(id);
+				else Scale = (1, 1);
+
 				if (repkup_overridescale) Scale = (repkup_scalex, 1);
 
 				Ticker = 0;
-			}
-			// Make sure halo thing is on the item
-			if (Master.pos != pos)
-			{
-				SetOrigin(Master.pos, true);
 			}
 		}
 		else
@@ -203,7 +197,6 @@ const REPKUP_MAXRNG = 21;
 // Where the actors are assigned to each other
 class REItemHandler : StaticEventHandler
 {
-	private bool _reloadOnNextTick;
 	private bool _noGlows;
 	private bool _hasReloaded; // Used for starting reload
 	private int _rngTic;
@@ -313,7 +306,7 @@ class REItemHandler : StaticEventHandler
 				if (repkup_debug)
 				{
 					if (info.UseIcon) Console.PrintF("USE ICON");
-					Console.PrintF("Found"..T.GetClassName());
+					Console.PrintF("Hi, "..T.GetClassName());
 				}
 
 				// Set variables
@@ -427,23 +420,9 @@ class REItemHandler : StaticEventHandler
 		}
 	}
 
-	override void WorldLoaded(WorldEvent e)
-	{
-		if (_noGlows) return;
-
-		ParseGroups();
-
-		// Auto reload on loading save
-		if (e.IsSaveGame)
-		{
-			_hasReloaded = true;
-			ReloadItemGlows();
-		}
-	}
-
 	override void WorldThingSpawned(WorldEvent e)
 	{
-		if (_noGlows) return;
+		if (_noGlows && !_hasReloaded) return;
 		let T = e.Thing;
 
 		let infos = ThinkerIterator.Create("REItemThinker");
@@ -486,25 +465,14 @@ class REItemHandler : StaticEventHandler
 
 	override void WorldTick()
 	{
-		// Player's inventory doesn't initialize immediately, curse you inventory system.
-		// Also, I have no idea why, but if I summoned the glows when maptime = 0, some items will overlay the glow.
-		// Why is this a thing???
-		// Better safe than sorry, I guess.
-		// Hopefully the player doesn't drop anything during the very first tic :]
 		if (
 			!_noGlows &&
-			(
-				!_hasReloaded &&
-				!repkup_nosave && // Wait for autosave?
-				Level.MapTime == 50
-			) || (
-				_reloadOnNextTick // Reload glows and thinkers after saving
-			)
+			!_hasReloaded
 		)
 		{
 			// No need for complex stuff, just do a quick reload ;]
-			_reloadOnNextTick = false;
 			_hasReloaded = true;
+
 			ParseGroups();
 			ReloadItemGlows();
 		}
@@ -516,8 +484,8 @@ class REItemHandler : StaticEventHandler
 			(gameaction == ga_savegame || gameaction == ga_autosave)
 		)
 		{
-			// Don't reload twice at the start (might still reload twice the first time)
-			_reloadOnNextTick = true;
+			// Force a reload after deleting
+			_hasReloaded = false;
 
 			Console.PrintF("Removing all glow effects...");
 			ClearGroups();

@@ -5,7 +5,7 @@ nosave float repkup_scalex=1.00;
 
 nosave int repkup_updatetic=16;
 nosave int repkup_renderdistance=512;
-nosave bool repkup_userendist=false;
+nosave bool repkup_userendist=true;
 nosave bool repkup_nosave=true;
 
 nosave bool repkup_overridescale=false;
