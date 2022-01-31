@@ -182,7 +182,7 @@ class REUselessThingJustForLoadingSprites : Actor
 	}
 }
 
-class REItemThinker : Thinker
+class REItemInfo
 {
 	Array<string> Classes;
 	Array<int> Frames;
@@ -201,6 +201,7 @@ class REItemHandler : StaticEventHandler
 	private bool _noGlows;
 	private bool _hasReloaded; // Used for starting reload
 	private int _rngTic;
+	private Array<REItemInfo> _infoList;
 	static const int RNGTABLE[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6};
 
 	// Checks if the class exists
@@ -211,19 +212,15 @@ class REItemHandler : StaticEventHandler
 		return (a);
 	}
 
-	// Say goodbye to all your glows :[
+	// Remove all info thinkers
 	private void ClearGroups()
 	{
-		// Remove all info thinkers
-		let infos = ThinkerIterator.Create("REItemThinker");
-		let info = infos.Next();
-		while (info)
+		for (int i = 0; i < _infoList.Size(); i++)
 		{
-			info.Destroy();
-			info = infos.Next();
+			_infoList[i].Destroy();
 		}
 
-		infos.Destroy();
+		_infoList.Clear();
 	}
 
 	// Remove all glows
@@ -249,19 +246,16 @@ class REItemHandler : StaticEventHandler
 		let a = actors.Next();
 		while (a)
 		{
-			let infos = ThinkerIterator.Create("REItemThinker");
-			let info = infos.Next();
-			while (info)
+			for (int i = 0; i < _infoList.Size(); i++)
 			{
-				bool found = SummonGlow(REItemThinker(info), Actor(a));
+				REItemInfo info = _infoList[i];
+				bool found = SummonGlow(info, Actor(a));
 
 				// Don't keep looping after found
 				if (found) break;
-				info = infos.Next();
 			}
 
 			a = actors.Next();
-			infos.Destroy();
 		}
 
 		actors.Destroy();
@@ -290,7 +284,7 @@ class REItemHandler : StaticEventHandler
 	}
 
 	// Returns true if successfully summoned
-	private bool SummonGlow(REItemThinker info, Actor T)
+	private bool SummonGlow(REItemInfo info, Actor T)
 	{
 		bool found = false;
 		for (int i = 0; i < info.Classes.Size(); i++)
@@ -333,7 +327,6 @@ class REItemHandler : StaticEventHandler
 	private void ParseGroups()
 	{
 		Console.PrintF("Reloading repkup_groups.txt...");
-		ClearGroups();
 
 		// Get all the stuff
 		Array<string> contents;
@@ -377,7 +370,7 @@ class REItemHandler : StaticEventHandler
 			// Skip if an argument is null
 			if (isNull) continue;
 
-			let t = new("REItemThinker");
+			let t = new("REItemInfo");
 			temp[0].Split(cTemp, ",");
 			t.Sprite = temp[1];
 			temp[2].Split(iTemp, ",");
@@ -418,6 +411,8 @@ class REItemHandler : StaticEventHandler
 			{
 				t.Frames.Push(iTemp[i].ToInt(10));
 			}
+
+			_infoList.Push(t);
 		}
 	}
 
@@ -426,18 +421,14 @@ class REItemHandler : StaticEventHandler
 		if (_noGlows && !_hasReloaded) return;
 		let T = e.Thing;
 
-		let infos = ThinkerIterator.Create("REItemThinker");
-		let info = infos.Next();
-		while (info)
+		for (int i = 0; i < _infoList.Size(); i++)
 		{
-			bool found = SummonGlow(REItemThinker(info), T);
+			REItemInfo info = _infoList[i];
+			bool found = SummonGlow(info, T);
 
 			// Don't keep looping after found
 			if (found) break;
-			info = infos.Next();
 		}
-
-		infos.Destroy();
 	}
 
 	override void NetworkProcess(ConsoleEvent e)
@@ -510,5 +501,6 @@ class REItemHandler : StaticEventHandler
 	override void WorldUnloaded(WorldEvent e)
 	{
 		_hasReloaded = false;
+		ClearGroups(); // Just in case
 	}
 }
