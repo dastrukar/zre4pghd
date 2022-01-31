@@ -46,12 +46,6 @@ class REItemGlow : Actor
 
 		if (Master)
 		{
-			// Make sure halo thing is on the item
-			if (Master.pos != pos)
-			{
-				SetOrigin(Master.pos, true);
-			}
-
 			// Hide if no sprite
 			if (
 				Master.CurState.Sprite == 0 &&
@@ -61,7 +55,14 @@ class REItemGlow : Actor
 				Alpha = 0;
 				return;
 			}
-			else if (
+
+			// Make sure halo thing is on the item
+			if (Master.pos != pos)
+			{
+				SetOrigin(Master.pos, true);
+			}
+
+			if (
 				repkup_userendist &&
 				RenderTimer <= 0
 			)
