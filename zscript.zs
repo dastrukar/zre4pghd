@@ -498,9 +498,8 @@ class REItemHandler : StaticEventHandler
 		}
 	}
 
-	override void WorldUnloaded(WorldEvent e)
+	override void WorldLoaded(WorldEvent e)
 	{
 		_hasReloaded = false;
-		ClearGroups(); // Just in case
 	}
 }
