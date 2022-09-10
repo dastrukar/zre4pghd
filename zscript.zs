@@ -245,7 +245,7 @@ class REItemHandler : StaticEventHandler
 		Console.PrintF("Reloading all glow effects...");
 		DeleteGlows();
 
-		let actors = ThinkerIterator.Create("Actor", Thinker.STAT_DEFAULT);
+		let actors = ThinkerIterator.Create("Actor");
 		let a = actors.Next();
 		while (a)
 		{
