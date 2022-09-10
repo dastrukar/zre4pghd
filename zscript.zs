@@ -159,7 +159,7 @@ class REItemGlow : Actor
 	{
 		+Actor.NOGRAVITY
 		+Actor.FORCEYBILLBOARD
-		+Actor.SYNCHRONIZE
+		+Actor.SYNCHRONIZED
 		-Actor.RANDOMIZE
 		Radius 0;
 		Height 0;
