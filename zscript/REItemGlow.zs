@@ -48,6 +48,7 @@ class REItemGlow : Actor
 				Console.PrintF(string.Format("Bye, %s!", ClassName));
 
 			Destroy();
+			return;
 		}
 
 		// Hide if no sprite
