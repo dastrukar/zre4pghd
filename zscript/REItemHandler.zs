@@ -157,12 +157,15 @@ class REItemHandler : StaticEventHandler
 				line.Replace("\r", "");
 				line.Replace("\n", "");
 
-				// Remove tabas & spaces
+				// Remove tabs & spaces
 				line.Replace("\t", "");
 				line.Replace(" ", "");
-			}
 
-			contents.Append(lumpLines);
+				if (line != "") {
+					contents.push(line);
+					if (hd_debug) Console.PrintF("Adding Line '"..line.."'... ");
+				}
+			}
 		}
 
 		for (int i = 0; i < contents.Size(); i++)
