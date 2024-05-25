@@ -123,6 +123,7 @@ class REItemHandler : StaticEventHandler
 				glow.UseIcon = info.UseIcon;
 				glow.UseCustom = info.UseCustom;
 				glow.CustomTex = info.CustomTex;
+				glow.CustomTranslation = info.CustomTranslation;
 				glow.FrameTic = PseudoRNG(0, info.FrameTime);
 				found = true;
 				break;
@@ -165,6 +166,7 @@ class REItemHandler : StaticEventHandler
 			}
 		}
 
+		// Format = ITEM_CLASS:SPRITE:TRANSLATION:FRAMES:FRAME_TIME:FLAGS
 		for (int i = 0; i < contents.Size(); i++)
 		{
 			Array<string> temp;
@@ -173,7 +175,7 @@ class REItemHandler : StaticEventHandler
 
 			contents[i].Split(temp, ":");
 			// Does it have enough arguments?
-			if (temp.Size() < 4)
+			if (temp.Size() < 5)
 			{
 				if (temp.Size() != 0 && i != (contents.Size() - 1))
 				{
@@ -202,12 +204,13 @@ class REItemHandler : StaticEventHandler
 			let t = new("REItemInfo");
 			temp[0].Split(cTemp, ",");
 			t.Sprite = temp[1];
-			temp[2].Split(iTemp, ",");
-			t.FrameTime = temp[3].ToInt(10);
+			t.CustomTranslation = temp[2];
+			temp[3].Split(iTemp, ",");
+			t.FrameTime = temp[4].ToInt(10);
 
-			if (temp.Size() > 4)
+			if (temp.Size() > 5)
 			{
-				let flag = temp[4];
+				let flag = temp[5];
 
 				if (flag == "USEICON")
 				{

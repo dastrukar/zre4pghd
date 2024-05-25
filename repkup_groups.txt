@@ -1,15 +1,15 @@
-DERPBot,HERPBot,HDSpent7mm,UaS_EmptyMedikit,UaS_EmptyStimpack,UaS_EmptyZerkpack,UaS_EmptyRocketBox:TNT1:0:1
+DERPBot,HERPBot,HDSpent7mm,UaS_EmptyMedikit,UaS_EmptyStimpack,UaS_EmptyZerkpack,UaS_EmptyRocketBox:TNT1:REPickup_White:0:1
 
-HDBackpack,HHelmet,HDArmour:REPK:16,17,18,19:2
+HDBackpack,HHelmet,HDArmour:REPK:REPickup_LightBlue:0,1,2,3:2
 
-UaS_Automap:REPK:0,1,2,3:2:USECUSTOM:PMAPA0
-HDMap,HDRedSkull,HDRedKey:REPK:0,1,2,3:2
+UaS_Automap:REPK:REPickup_White:0,1,2,3:2:USECUSTOM:PMAPA0
+HDMap,HDRedSkull,HDRedKey:REPK:REPickup_White:0,1,2,3:2
 
-UaS_Consumable:REPK:12,13,14,15:2:USEICON
-BrownSphere,BlueSphere,SpiritualArmour,PortableMedikit,HDInjectorMaker,HDWoundFixer,UaS_TraumaKit,UaS_2FCartridge:REPK:12,13,14,15:2
+UaS_Consumable:REPK:REPickup_Green:0,1,2,3:2:USEICON
+BrownSphere,BlueSphere,SpiritualArmour,PortableMedikit,PortableStimpack,HDWoundFixer,UaS_TraumaKit,UaS_2FCartridge:REPK:REPickup_Green:0,1,2,3:2
 
-HDMBR:REPK:8,9,10,11:2:USECUSTOM:MFCLA0
-HDBastardRifle:REPK:8,9,10,11:2:USEICON
-HDWeapon:REPK:8,9,10,11:2
+HDMBR:REPK:REPickup_Blue:0,1,2,3:2:USECUSTOM:MFCLA0
+HDBastardRifle:REPK:REPickup_Blue:0,1,2,3:2:USEICON
+HDWeapon:REPK:REPickup_Blue:0,1,2,3:2
 
-HDUPK,HDAmmo,HDPickup:REPK:4,5,6,7:2
+HDUPK,HDAmmo,HDPickup:REPK:REPickup_Red:0,1,2,3:2

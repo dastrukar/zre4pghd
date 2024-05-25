@@ -1,0 +1,5 @@
+REPickup_White     = "0:255=#[255,255,255]"
+REPickup_Red       = "0:255=#[255,0,0]"
+REPickup_Green     = "0:255=#[0,255,0]"
+REPickup_Blue      = "0:255=#[30,144,255]"
+REPickup_LightBlue = "0:255=#[166,211,255]"

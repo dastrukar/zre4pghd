@@ -2,6 +2,7 @@ class REItemGlow : Actor
 {
 	Actor Master;
 	TextureID CustomTex;
+	string CustomTranslation;
 	int RenderTimer;
 	int Ticker;
 	int FrameTic;
@@ -152,6 +153,7 @@ class REItemGlow : Actor
 		// not taking any chances here
 		invoker.ResetTic();
 		invoker.Sprite = invoker.SpriteIndex;
+		invoker.A_SetTranslation(invoker.CustomTranslation);
 		invoker.Frame = invoker.Frames[invoker.FrameTic];
 		invoker.A_SetTics(invoker.FrameTime);
 		invoker.FrameTic++;
