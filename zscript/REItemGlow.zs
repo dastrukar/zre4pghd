@@ -43,6 +43,15 @@ class REItemGlow : Actor
 	{
 		Super.Tick();
 
+		// DoAnimate() Logic, runs on every tick anyways
+		ResetTic();
+		Sprite = SpriteIndex;
+		// A_SetTranslation(CustomTranslation);
+		Frame = Frames[FrameTic];
+		A_SetTics(FrameTime);
+		FrameTic++;
+		ResetTic();
+
 		if (!Master)
 		{
 			if (repkup_debug) Console.PrintF(string.Format("Bye, %s!", ClassName));
@@ -147,19 +156,6 @@ class REItemGlow : Actor
 		SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * mScale.x, 0);
 	}
 
-	// Should be called every tick
-	private action void A_DoAnimate()
-	{
-		// not taking any chances here
-		invoker.ResetTic();
-		invoker.Sprite = invoker.SpriteIndex;
-		invoker.A_SetTranslation(invoker.CustomTranslation);
-		invoker.Frame = invoker.Frames[invoker.FrameTic];
-		invoker.A_SetTics(invoker.FrameTime);
-		invoker.FrameTic++;
-		invoker.ResetTic();
-	}
-
 	Default
 	{
 		+Actor.NOGRAVITY
@@ -177,7 +173,7 @@ class REItemGlow : Actor
 		PreCache:
 			REPK A 0;
 		Spawn:
-			TNT1 A 1 A_DoAnimate();
+			TNT1 A 1;
 			loop;
 	}
 }
