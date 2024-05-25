@@ -174,12 +174,10 @@ class REItemGlow : Actor
 
 	States
 	{
+		PreCache:
+			REPK A 0;
 		Spawn:
 			TNT1 A 1 A_DoAnimate();
 			loop;
-
-		ThisStateIsNeverUsed:
-			REPK A 0; // i have to use REPKA0 here, because sprites won't load in, unless you use them
-			goto Spawn;
 	}
 }
