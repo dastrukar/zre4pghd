@@ -20,9 +20,9 @@ class REItemHandler : StaticEventHandler
 	// Remove all info thinkers
 	private void ClearGroups()
 	{
-		for (int i = 0; i < _infoList.Size(); i++)
+		foreach (info : _infoList)
 		{
-			_infoList[i].Destroy();
+			info.Destroy();
 		}
 
 		_infoList.Clear();
@@ -51,9 +51,8 @@ class REItemHandler : StaticEventHandler
 		let a = actors.Next();
 		while (a)
 		{
-			for (int i = 0; i < _infoList.Size(); i++)
+			foreach (info : _infoList)
 			{
-				REItemInfo info = _infoList[i];
 				bool found = SummonGlow(info, Actor(a));
 
 				// Don't keep looping after found
