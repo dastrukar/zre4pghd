@@ -44,8 +44,7 @@ class REItemGlow : Actor
 
 		if (!Master)
 		{
-			if (repkup_debug)
-				Console.PrintF(string.Format("Bye, %s!", ClassName));
+			if (repkup_debug) Console.PrintF(string.Format("Bye, %s!", ClassName));
 
 			Destroy();
 			return;
@@ -54,7 +53,8 @@ class REItemGlow : Actor
 		// Hide if no sprite
 		if (
 			Master.CurState.Sprite == 0 &&
-			!(UseIcon && Inventory(Master) && !Inventory(Master).Owner)
+			!(UseIcon && Inventory(Master) &&
+			!Inventory(Master).Owner)
 		)
 		{
 			Alpha = 0;
@@ -62,8 +62,7 @@ class REItemGlow : Actor
 		}
 
 		// Make sure halo thing is on the item
-		if (Master.pos != pos)
-			SetOrigin(Master.pos, true);
+		if (Master.pos != pos) SetOrigin(Master.pos, true);
 
 		if (
 			repkup_userendist &&
@@ -71,17 +70,14 @@ class REItemGlow : Actor
 		)
 		{
 			// Fade out
-			if (Alpha > 0)
-				Alpha = Max(0, Alpha - repkup_fadeout);
+			if (Alpha > 0) Alpha = Max(0, Alpha - repkup_fadeout);
 			return;
 		}
 
-		if (RenderTimer > 0)
-			RenderTimer--;
+		if (RenderTimer > 0) RenderTimer--;
 
 		// Fade in
-		if (Alpha < repkup_alpha)
-			Alpha = Min(Alpha + repkup_fadein, repkup_alpha);
+		if (Alpha < repkup_alpha) Alpha = Min(Alpha + repkup_fadein, repkup_alpha);
 
 		// Don't always do math stuff
 		Ticker++;
@@ -91,31 +87,39 @@ class REItemGlow : Actor
 
 			// What a thrill...
 			if (UseCustom)
+			{
 				id = CustomTex;
-
+			}
 			else if (UseIcon && Inventory(Master).icon)
+			{
 				id = Inventory(Master).icon;
-
+			}
 			else if (
 				Master.ResolveState("spawn") &&
 				CheckIfTNT(Master.ResolveState("spawn"))
 			)
+			{
 				id = Master.ResolveState("spawn").GetSpriteTexture(Master.SpriteRotation);
-
+			}
 			else if (
 				Master.CurState &&
 				CheckIfTNT(Master.CurState)
 			)
+			{
 				id = Master.CurState.GetSpriteTexture(Master.SpriteRotation);
+			}
+
 
 			if (id)
+			{
 				AdjustSprite(id);
-
+			}
 			else
+			{
 				Scale = (1, 1);
+			}
 
-			if (repkup_overridescale)
-				Scale = (repkup_scalex, 1);
+			if (repkup_overridescale) Scale = (repkup_scalex, 1);
 
 			Ticker = 0;
 		}
@@ -124,8 +128,7 @@ class REItemGlow : Actor
 	private void ResetTic()
 	{
 		// please stop aborting vm thanks
-		if (FrameTic == Frames.Size())
-			FrameTic = 0;
+		if (FrameTic == Frames.Size()) FrameTic = 0;
 	}
 
 	private void AdjustSprite(TextureID texid)
