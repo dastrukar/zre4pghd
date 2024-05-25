@@ -46,7 +46,7 @@ class REItemGlow : Actor
 		// DoAnimate() Logic, runs on every tick anyways
 		ResetTic();
 		Sprite = SpriteIndex;
-		// A_SetTranslation(CustomTranslation);
+		A_SetTranslation(CustomTranslation);
 		Frame = Frames[FrameTic];
 		A_SetTics(FrameTime);
 		FrameTic++;
@@ -165,7 +165,7 @@ class REItemGlow : Actor
 		Radius 0;
 		Height 0;
 		FloatBobPhase 0; // i have no clue what this is, but it uses rng and causes desyncs in online play
-		RenderStyle "Translucent";
+		RenderStyle "Add";
 	}
 
 	States
