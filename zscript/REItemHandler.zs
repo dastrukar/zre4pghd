@@ -239,6 +239,17 @@ class REItemHandler : StaticEventHandler
 			for (int i = 0; i < cTemp.Size(); i++)
 			{
 				if (CheckClass(cTemp[i])) t.Classes.Push(cTemp[i]);
+
+				for (int j = 0; j < _infoList.Size(); j++)
+				{
+					let prevInfo = _infoList[j];
+					let prevClass = prevInfo.Classes.Find(cTemp[i]);
+					if (prevClass < prevInfo.Classes.Size())
+					{
+						prevInfo.Classes.Delete(prevClass);
+						// break;
+					}
+				}
 			}
 
 			for (int i = 0; i < iTemp.Size(); i++)
