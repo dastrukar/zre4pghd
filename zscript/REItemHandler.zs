@@ -213,20 +213,26 @@ class REItemHandler : StaticEventHandler
 				let flag = temp[4];
 
 				if (flag == "USEICON")
+				{
 					t.UseIcon = true;
 
+				}
 				else if (flag == "USECUSTOM")
 				{
-					if (temp.Size() > 5)
+					if (temp.Size() > 6)
 					{
 						t.UseCustom = true;
-						t.CustomTex = TexMan.CheckForTexture(temp[5]);
+						t.CustomTex = TexMan.CheckForTexture(temp[6]);
 					}
 					else
+					{
 						Console.PrintF(string.Format("Group at line %d used flag \"USECUSTOM\", but didn't provide an argument afterwards.\nIgnoring flag.", i + 1));
+					}
 				}
 				else
+				{
 					Console.PrintF(string.Format("Group at line %d used an invalid flag.\nIgnoring flag.", i + 1));
+				}
 			}
 
 			// If there's an invalid class, just remove it
