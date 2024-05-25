@@ -70,8 +70,7 @@ class REItemHandler : StaticEventHandler
 		_rngTic++;
 
 		// Don't overflow
-		if (_rngTic >= REPKUP_MAXRNG)
-			_rngTic = 0;
+		if (_rngTic >= REPKUP_MAXRNG) _rngTic = 0;
 
 		return _rngTic;
 	}
@@ -85,8 +84,7 @@ class REItemHandler : StaticEventHandler
 		{
 			result -= RNGTABLE[GetRNGTic()];
 
-			if (result < min)
-				return min;
+			if (result < min) return min;
 		}
 		return result;
 	}
@@ -336,8 +334,7 @@ class REItemHandler : StaticEventHandler
 			let it = BlockThingsIterator.Create(players[ConsolePlayer].mo, repkup_renderdistance);
 			while (it.Next())
 			{
-				if (it.Thing.GetClassName() == "REItemGlow")
-					REItemGlow(it.Thing).RenderTimer = 10;
+				if (it.Thing.GetClassName() == "REItemGlow") REItemGlow(it.Thing).RenderTimer = 10;
 			}
 		}
 	}
