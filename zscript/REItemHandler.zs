@@ -95,9 +95,9 @@ class REItemHandler : StaticEventHandler
 	private bool SummonGlow(REItemInfo info, Actor T)
 	{
 		bool found = false;
-		for (int i = 0; i < info.Classes.Size(); i++)
+		foreach (cls : info.Classes)
 		{
-			if (T is info.Classes[i])
+			if (T is cls)
 			{
 				// Is this a blacklisted item?
 				if (info.Sprite == "TNT1")
@@ -151,10 +151,8 @@ class REItemHandler : StaticEventHandler
 			let lt = Wads.ReadLump(lumpNum);
 			lt.split(lumpLines, "\n");
 
-			for (int i = 0; i < lumpLines.Size(); i++)
+			foreach (line : lumpLines)
 			{
-				let line = lumpLines[i];
-
 				// Remove excess newline and return characters
 				line.Replace("\r", "");
 				line.Replace("\n", "");
@@ -236,25 +234,25 @@ class REItemHandler : StaticEventHandler
 			}
 
 			// If there's an invalid class, just remove it
-			for (int i = 0; i < cTemp.Size(); i++)
+			foreach (c : cTemp)
 			{
-				if (CheckClass(cTemp[i])) t.Classes.Push(cTemp[i]);
+				if (CheckClass(c))
+					t.Classes.Push(c);
 
-				for (int j = 0; j < _infoList.Size(); j++)
+				foreach (j : _infoList)
 				{
-					let prevInfo = _infoList[j];
-					let prevClass = prevInfo.Classes.Find(cTemp[i]);
-					if (prevClass < prevInfo.Classes.Size())
+					let prevClass = j.Classes.Find(c);
+					if (prevClass < j.Classes.Size())
 					{
-						prevInfo.Classes.Delete(prevClass);
+						j.Classes.Delete(prevClass);
 						// break;
 					}
 				}
 			}
 
-			for (int i = 0; i < iTemp.Size(); i++)
+			foreach (i : iTemp)
 			{
-				t.Frames.Push(iTemp[i].ToInt(10));
+				t.Frames.Push(i.ToInt(10));
 			}
 
 			_infoList.Push(t);
@@ -267,9 +265,8 @@ class REItemHandler : StaticEventHandler
 			return;
 
 		let T = e.Thing;
-		for (int i = 0; i < _infoList.Size(); i++)
+		foreach (info : _infoList)
 		{
-			REItemInfo info = _infoList[i];
 			bool found = SummonGlow(info, T);
 
 			// Don't keep looping after found
