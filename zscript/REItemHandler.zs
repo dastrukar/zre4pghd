@@ -70,7 +70,8 @@ class REItemHandler : StaticEventHandler
 		_rngTic++;
 
 		// Don't overflow
-		if (_rngTic >= REPKUP_MAXRNG) _rngTic = 0;
+		if (_rngTic >= REPKUP_MAXRNG)
+			_rngTic = 0;
 
 		return _rngTic;
 	}
@@ -84,7 +85,8 @@ class REItemHandler : StaticEventHandler
 		{
 			result -= RNGTABLE[GetRNGTic()];
 
-			if (result < min) return min;
+			if (result < min)
+				return min;
 		}
 		return result;
 	}
@@ -141,14 +143,16 @@ class REItemHandler : StaticEventHandler
 		Array<string> contents;
 
 		let lumpNum = -1;
-		while ((lumpNum = Wads.FindLump("repkup_groups", lumpNum + 1)) >= 0) {
+		while ((lumpNum = Wads.FindLump("repkup_groups", lumpNum + 1)) >= 0)
+		{
 			Array<string> lumpLines;
 			lumpLines.Clear();
 
 			let lt = Wads.ReadLump(lumpNum);
 			lt.split(lumpLines, "\n");
 
-			for (int i = 0; i < lumpLines.Size(); i++) {
+			for (int i = 0; i < lumpLines.Size(); i++)
+			{
 				let line = lumpLines[i];
 
 				// Remove excess newline and return characters
@@ -225,14 +229,10 @@ class REItemHandler : StaticEventHandler
 						t.CustomTex = TexMan.CheckForTexture(temp[6]);
 					}
 					else
-					{
 						Console.PrintF(string.Format("Group at line %d used flag \"USECUSTOM\", but didn't provide an argument afterwards.\nIgnoring flag.", i + 1));
-					}
 				}
 				else
-				{
 					Console.PrintF(string.Format("Group at line %d used an invalid flag.\nIgnoring flag.", i + 1));
-				}
 			}
 
 			// If there's an invalid class, just remove it
@@ -337,7 +337,8 @@ class REItemHandler : StaticEventHandler
 			let it = BlockThingsIterator.Create(players[ConsolePlayer].mo, repkup_renderdistance);
 			while (it.Next())
 			{
-				if (it.Thing.GetClassName() == "REItemGlow") REItemGlow(it.Thing).RenderTimer = 10;
+				if (it.Thing.GetClassName() == "REItemGlow")
+					REItemGlow(it.Thing).RenderTimer = 10;
 			}
 		}
 	}
