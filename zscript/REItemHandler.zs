@@ -20,9 +20,9 @@ class REItemHandler : StaticEventHandler
 	// Remove all info thinkers
 	private void ClearGroups()
 	{
-		for (int i = 0; i < _infoList.Size(); i++)
+		foreach (info : _infoList)
 		{
-			_infoList[i].Destroy();
+			info.Destroy();
 		}
 
 		_infoList.Clear();
@@ -51,9 +51,8 @@ class REItemHandler : StaticEventHandler
 		let a = actors.Next();
 		while (a)
 		{
-			for (int i = 0; i < _infoList.Size(); i++)
+			foreach (info : _infoList)
 			{
-				REItemInfo info = _infoList[i];
 				bool found = SummonGlow(info, Actor(a));
 
 				// Don't keep looping after found
@@ -96,9 +95,9 @@ class REItemHandler : StaticEventHandler
 	private bool SummonGlow(REItemInfo info, Actor T)
 	{
 		bool found = false;
-		for (int i = 0; i < info.Classes.Size(); i++)
+		foreach (cls : info.Classes)
 		{
-			if (T is info.Classes[i])
+			if (T is cls)
 			{
 				// Is this a blacklisted item?
 				if (info.Sprite == "TNT1")
@@ -126,6 +125,7 @@ class REItemHandler : StaticEventHandler
 				glow.UseIcon = info.UseIcon;
 				glow.UseCustom = info.UseCustom;
 				glow.CustomTex = info.CustomTex;
+				glow.CustomTranslation = info.CustomTranslation;
 				glow.FrameTic = PseudoRNG(0, info.FrameTime);
 				found = true;
 				break;
@@ -142,11 +142,33 @@ class REItemHandler : StaticEventHandler
 		// Get all the stuff
 		Array<string> contents;
 
-		let lump = Wads.FindLump("repkup_groups");
-		let lt = Wads.ReadLump(lump);
-		lt.replace("\r\n", "\n");
-		lt.split(contents, "\n");
+		let lumpNum = -1;
+		while ((lumpNum = Wads.FindLump("repkup_groups", lumpNum + 1)) >= 0)
+		{
+			Array<string> lumpLines;
+			lumpLines.Clear();
 
+			let lt = Wads.ReadLump(lumpNum);
+			lt.split(lumpLines, "\n");
+
+			foreach (line : lumpLines)
+			{
+				// Remove excess newline and return characters
+				line.Replace("\r", "");
+				line.Replace("\n", "");
+
+				// Remove tabs & spaces
+				line.Replace("\t", "");
+				line.Replace(" ", "");
+
+				if (line != "") {
+					contents.push(line);
+					if (hd_debug) Console.PrintF("Adding Line '"..line.."'... ");
+				}
+			}
+		}
+
+		// Format = ITEM_CLASS:SPRITE:TRANSLATION:FRAMES:FRAME_TIME:FLAGS
 		for (int i = 0; i < contents.Size(); i++)
 		{
 			Array<string> temp;
@@ -155,7 +177,7 @@ class REItemHandler : StaticEventHandler
 
 			contents[i].Split(temp, ":");
 			// Does it have enough arguments?
-			if (temp.Size() < 4)
+			if (temp.Size() < 5)
 			{
 				if (temp.Size() != 0 && i != (contents.Size() - 1))
 				{
@@ -184,22 +206,25 @@ class REItemHandler : StaticEventHandler
 			let t = new("REItemInfo");
 			temp[0].Split(cTemp, ",");
 			t.Sprite = temp[1];
-			temp[2].Split(iTemp, ",");
-			t.FrameTime = temp[3].ToInt(10);
+			t.CustomTranslation = temp[2];
+			temp[3].Split(iTemp, ",");
+			t.FrameTime = temp[4].ToInt(10);
 
-			if (temp.Size() > 4)
+			if (temp.Size() > 5)
 			{
-				let flag = temp[4];
+				let flag = temp[5];
 
 				if (flag == "USEICON")
+				{
 					t.UseIcon = true;
 
+				}
 				else if (flag == "USECUSTOM")
 				{
-					if (temp.Size() > 5)
+					if (temp.Size() > 6)
 					{
 						t.UseCustom = true;
-						t.CustomTex = TexMan.CheckForTexture(temp[5]);
+						t.CustomTex = TexMan.CheckForTexture(temp[6]);
 					}
 					else
 						Console.PrintF(string.Format("Group at line %d used flag \"USECUSTOM\", but didn't provide an argument afterwards.\nIgnoring flag.", i + 1));
@@ -209,14 +234,25 @@ class REItemHandler : StaticEventHandler
 			}
 
 			// If there's an invalid class, just remove it
-			for (int i = 0; i < cTemp.Size(); i++)
+			foreach (c : cTemp)
 			{
-				if (CheckClass(cTemp[i])) t.Classes.Push(cTemp[i]);
+				if (CheckClass(c))
+					t.Classes.Push(c);
+
+				foreach (j : _infoList)
+				{
+					let prevClass = j.Classes.Find(c);
+					if (prevClass < j.Classes.Size())
+					{
+						j.Classes.Delete(prevClass);
+						// break;
+					}
+				}
 			}
 
-			for (int i = 0; i < iTemp.Size(); i++)
+			foreach (i : iTemp)
 			{
-				t.Frames.Push(iTemp[i].ToInt(10));
+				t.Frames.Push(i.ToInt(10));
 			}
 
 			_infoList.Push(t);
@@ -229,9 +265,8 @@ class REItemHandler : StaticEventHandler
 			return;
 
 		let T = e.Thing;
-		for (int i = 0; i < _infoList.Size(); i++)
+		foreach (info : _infoList)
 		{
-			REItemInfo info = _infoList[i];
 			bool found = SummonGlow(info, T);
 
 			// Don't keep looping after found

@@ -2,6 +2,7 @@ class REItemGlow : Actor
 {
 	Actor Master;
 	TextureID CustomTex;
+	string CustomTranslation;
 	int RenderTimer;
 	int Ticker;
 	int FrameTic;
@@ -42,6 +43,15 @@ class REItemGlow : Actor
 	{
 		Super.Tick();
 
+		// DoAnimate() Logic, runs on every tick anyways
+		ResetTic();
+		Sprite = SpriteIndex;
+		A_SetTranslation(CustomTranslation);
+		Frame = Frames[FrameTic];
+		A_SetTics(FrameTime);
+		FrameTic++;
+		ResetTic();
+
 		if (!Master)
 		{
 			if (repkup_debug)
@@ -54,7 +64,8 @@ class REItemGlow : Actor
 		// Hide if no sprite
 		if (
 			Master.CurState.Sprite == 0 &&
-			!(UseIcon && Inventory(Master) && !Inventory(Master).Owner)
+			!(UseIcon && Inventory(Master) &&
+			!Inventory(Master).Owner)
 		)
 		{
 			Alpha = 0;
@@ -143,18 +154,6 @@ class REItemGlow : Actor
 		SpriteOffset = ((offset.x - int(size.x / 2)) * -1 * mScale.x, 0);
 	}
 
-	// Should be called every tick
-	private action void A_DoAnimate()
-	{
-		// not taking any chances here
-		invoker.ResetTic();
-		invoker.Sprite = invoker.SpriteIndex;
-		invoker.Frame = invoker.Frames[invoker.FrameTic];
-		invoker.A_SetTics(invoker.FrameTime);
-		invoker.FrameTic++;
-		invoker.ResetTic();
-	}
-
 	Default
 	{
 		+Actor.NOGRAVITY
@@ -164,17 +163,15 @@ class REItemGlow : Actor
 		Radius 0;
 		Height 0;
 		FloatBobPhase 0; // i have no clue what this is, but it uses rng and causes desyncs in online play
-		RenderStyle "Translucent";
+		RenderStyle "Add";
 	}
 
 	States
 	{
+		PreCache:
+			REPK A 0;
 		Spawn:
-			TNT1 A 1 A_DoAnimate();
+			TNT1 A 1;
 			loop;
-
-		ThisStateIsNeverUsed:
-			REPK A 0; // i have to use REPKA0 here, because sprites won't load in, unless you use them
-			goto Spawn;
 	}
 }

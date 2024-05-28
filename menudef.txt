@@ -76,6 +76,10 @@ OptionMenu "PKUPOther" {
     StaticText "Refer to readme.md if you get lost.", "White"
 }
 
+AddOptionMenu "HDAddonMenu" {
+    Submenu "Pickup Glow Options", "PKUPOptions"
+}
+
 AddOptionMenu "OptionsMenu" {
     Submenu "Pickup Glow Options", "PKUPOptions"
 }
