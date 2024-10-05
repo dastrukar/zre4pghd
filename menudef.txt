@@ -17,6 +17,7 @@ OptionMenu "PKUPOptions" {
 
     Option "Override Automatic Scale", "repkup_overridescale", "YesNo"
     Slider "Sprite Scale X", "repkup_scalex", 0.00, 1.00, 0.01, 2, "repkup_overridescale"
+    Slider "Sprite Scale Y", "repkup_scaley", 0.00, 1.00, 0.01, 2, "repkup_overridescale"
 
 
     StaticText " "

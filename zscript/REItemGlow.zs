@@ -126,7 +126,7 @@ class REItemGlow : Actor
 				Scale = (1, 1);
 
 			if (repkup_overridescale)
-				Scale = (repkup_scalex, 1);
+				Scale = (repkup_scalex, repkup_scaley);
 
 			Ticker = 0;
 		}
